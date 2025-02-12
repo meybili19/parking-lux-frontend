@@ -1,40 +1,35 @@
-"use client";  // ✅ Indica que es un componente del cliente
+"use client";
 
-import Link from "next/link";
 import { useAuth } from "@/src/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const { token, logout } = useAuth();
+  const router = useRouter();
 
   return (
-    <nav className="bg-blue-600 text-white p-4 shadow-md flex justify-between">
-      <h1 className="text-xl font-bold">ParkingLux</h1>
-      <ul className="flex space-x-4">
-        <li>
-          <Link href="/" className="hover:underline">
-            Inicio
-          </Link>
-        </li>
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+      <a className="navbar-brand fw-bold fs-3" href="/">
+        <img src="/rocket.png" alt="ParkingLux Logo" className="me-2" style={{ height: "40px" }} />
+        ParkingLux
+      </a>
+      <div className="ms-auto">
         {token ? (
-          <>
-            <li className="text-green-300">Bienvenido</li>
-            <li>
-              <button
-                onClick={logout}
-                className="bg-red-500 px-3 py-1 rounded hover:bg-red-700"
-              >
-                Cerrar Sesión
-              </button>
-            </li>
-          </>
+          <button
+            onClick={logout}
+            className="btn btn-outline-danger"
+          >
+            Cerrar Sesión
+          </button>
         ) : (
-          <li>
-            <Link href="/login" className="hover:underline">
-              Iniciar Sesión
-            </Link>
-          </li>
+          <button
+            onClick={() => router.push("/login")}
+            className="btn btn-outline-light"
+          >
+            Iniciar Sesión
+          </button>
         )}
-      </ul>
+      </div>
     </nav>
   );
 }
