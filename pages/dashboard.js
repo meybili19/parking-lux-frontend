@@ -1,94 +1,70 @@
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import axios from "axios";
+import Link from "next/link";
 import "bootstrap/dist/css/bootstrap.min.css";
+import UsersPage from "./users"; // Importamos la página de usuarios
 
 export default function DashboardPage() {
-    const [user, setUser] = useState(null);
-    const router = useRouter();
+    const [selectedSection, setSelectedSection] = useState(null);
 
-    // 📌 Obtener datos del usuario autenticado
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                if (!token) {
-                    router.push("/login");
-                    return;
-                }
-
-                const response = await axios.get("http://localhost:5009/me", {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-
-                setUser(response.data);
-            } catch (error) {
-                console.error("❌ Error obteniendo usuario:", error);
-                router.push("/login");
-            }
-        };
-
-        fetchUserData();
-    }, [router]);
-
-    // 📌 Cerrar sesión
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        router.push("/login");
-    };
-
-    if (!user) return <div className="text-center mt-5">Cargando...</div>;
+        // Cargar Bootstrap JS manualmente
+        if (typeof window !== "undefined") {
+            require("bootstrap/dist/js/bootstrap.bundle.min.js");
+        }
+    }, []);
 
     return (
-        <div className="container mt-5">
-            <h2 className="text-center mb-4">📌 Panel de Control</h2>
-
-            <div className="row">
-                {/* 🔹 Tarjeta de Clientes */}
-                <div className="col-md-4">
-                    <div className="card p-4 shadow-lg text-center">
-                        <h4 className="text-primary">👥 Clientes</h4>
-                        <p>Gestiona los clientes de la tienda</p>
-                        <button className="btn btn-primary" onClick={() => router.push("/clients")}>Ir a Clientes</button>
+        <div className="container-fluid">
+            {/* Navbar */}
+            <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+                <div className="container">
+                    <a 
+                        className="navbar-brand fw-bold" 
+                        style={{ cursor: "pointer" }} 
+                        onClick={() => setSelectedSection(null)}
+                    >
+                        PARKING LUX
+                    </a>
+                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon"></span>
+                    </button>
+                    <div className="collapse navbar-collapse" id="navbarNav">
+                        <ul className="navbar-nav ms-auto text-center">
+                            <li className="nav-item">
+                                <a className="nav-link" style={{ cursor: "pointer" }} onClick={() => setSelectedSection("users")}>
+                                    Registrar Usuario
+                                </a>
+                            </li>
+                            <li className="nav-item"><a className="nav-link" href="#">Registrar Vehículo</a></li>
+                            <li className="nav-item"><a className="nav-link" href="#">Registrar Reserva</a></li>
+                            <li className="nav-item"><a className="nav-link" href="#">Control de Acceso</a></li>
+                        </ul>
                     </div>
                 </div>
+            </nav>
 
-                {/* 🔹 Tarjeta de Proveedores */}
-                <div className="col-md-4">
-                    <div className="card p-4 shadow-lg text-center">
-                        <h4 className="text-warning">🚚 Proveedores</h4>
-                        <p>Gestiona los proveedores de la tienda</p>
-                        <button className="btn btn-warning" onClick={() => router.push("/providers")}>Ir a Proveedores</button>
-                    </div>
-                </div>
-                 {/* Productos */}
-                 <div className="col-md-3">
-                    <div className="card p-3 text-center shadow">
-                        <h5>📦 <span className="text-success">Productos</span></h5>
-                        <p>Gestiona los productos de la tienda</p>
-                        <button className="btn btn-success" onClick={() => router.push("/products")}>
-                            Ir a Productos
-                        </button>
-                    </div>
-                </div>
+            {/* Sección Dinámica: Se muestra dependiendo de la opción seleccionada */}
+            <div className="container text-center py-5">
+                {selectedSection === "users" ? (
+                    <UsersPage />
+                ) : (
+                    <>
+                        <h2 className="fw-bold">📌 Panel de Control - Gestión de Parqueadero</h2>
+                        <p>Seleccione una de las opciones del menú para continuar.</p>
 
-                {/* 🔹 Tarjeta de Perfil del Usuario */}
-                <div className="col-md-4">
-                    <div className="card p-4 shadow-lg text-center">
-                        <h4 className="text-success">🟢 Mi Perfil</h4>
-                        <p><strong>Nombre:</strong> {user.first_name} {user.last_name}</p>
-                        <p><strong>Email:</strong> {user.email}</p>
-                        <p><strong>Teléfono:</strong> {user.phone_number || "No registrado"}</p>
-
-                        <div className="d-flex justify-content-between">
-                            {/* 🔹 Botón de INFO para ver perfil completo */}
-                            <button className="btn btn-info" onClick={() => router.push("/profile")}>ℹ️ Info</button>
-
-                            {/* 🔹 Botón de Cerrar Sesión */}
-                            <button className="btn btn-danger" onClick={handleLogout}>⬅️ Cerrar Sesión</button>
+                        {/* Sección de imágenes y texto responsivo */}
+                        <div className="row mt-4 d-flex align-items-center">
+                            <div className="col-md-6">
+                                <img src="https://via.placeholder.com/400" className="img-fluid rounded shadow" alt="Parqueadero" />
+                            </div>
+                            <div className="col-md-6 text-start mt-3 mt-md-0">
+                                <h4>🚗 Administración de parqueos</h4>
+                                <p>Gestione sus reservas, usuarios y vehículos de manera eficiente con nuestro sistema.</p>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    </>
+                )}
             </div>
         </div>
     );

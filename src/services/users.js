@@ -1,9 +1,9 @@
 import axios from "axios";
 
-const READ_API = "http://52.3.1.74:5002/all/users";
-const CREATE_API = "http://98.85.44.62:5000/users";
-const UPDATE_API = "http://44.212.131.29:5001/users";
-const DELETE_API = "http://34.196.106.116/users";
+const READ_API = "http://localhost:5002/all/users";
+const CREATE_API = "http://localhost:5000/users";
+const UPDATE_API = "http://localhost:5001/users";
+const DELETE_API = "http://localhost:5003/users";
 
 // 🔹 Obtener lista de Users desde la API REST
 export const getUsers = async () => {
