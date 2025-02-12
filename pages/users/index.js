@@ -1,75 +1,112 @@
 import { useEffect, useState } from "react";
-import { getCustomers, createCustomer, updateCustomer, deleteCustomer } from "../../src/services/customers";
+import { getUsers, createUser, updateUser, deleteUser } from "../../src/services/users";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-export default function ClientsPage() {
-    const [customers, setCustomers] = useState([]);
+export default function UsersPage() {
+    const [users, setUsers] = useState([]);
     const [search, setSearch] = useState("");
     const [showModal, setShowModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [newCustomer, setNewCustomer] = useState({ first_name: "", last_name: "", email: "", phone_number: "", address: "" });
-    const [editingCustomer, setEditingCustomer] = useState(null);
-    const [deletingCustomer, setDeletingCustomer] = useState(null);
+    const [newUser, setNewUser] = useState({ identification: "", name: "", email: "", password: "", type: "" });
+    const [editingUser, setEditingUser] = useState(null);
+    const [deletingUser, setDeletingUser] = useState(null);
 
-    // 📌 Cargar clientes al inicio
+    // 📌 Cargar Users al inicio
     useEffect(() => {
-        async function fetchCustomers() {
+        async function fetchUsers() {
             try {
-                const response = await getCustomers();
-                console.log("📡 Clientes recibidos:", response);
-                setCustomers(response);
+                const response = await getUsers();
+                console.log("📡 Users recibidos:", response);
+                setUsers(response);
             } catch (error) {
-                console.error("❌ Error cargando clientes:", error);
+                console.error("❌ Error cargando Users:", error);
             }
         }
-        fetchCustomers();
+        fetchUsers();
     }, []);
 
-    // 📌 Filtrar clientes
-    const filteredCustomers = customers.filter(customer =>
-        customer.first_name.toLowerCase().includes(search.toLowerCase()) ||
-        customer.last_name.toLowerCase().includes(search.toLowerCase()) ||
-        customer.email.toLowerCase().includes(search.toLowerCase())
+    // 📌 Filtrar Users
+    const filteredUsers = users.filter(user =>
+        (user.identification?.toLowerCase() || "").includes(search.toLowerCase()) ||
+        (user.name?.toLowerCase() || "").includes(search.toLowerCase()) ||
+        (user.email?.toLowerCase() || "").includes(search.toLowerCase())
     );
 
-    // 📌 Guardar nuevo cliente
-    const handleSaveCustomer = async () => {
+    // 📌 Guardar nuevo User
+    const handleSaveUser = async () => {
         try {
-            const created = await createCustomer(newCustomer);
-            setCustomers([...customers, created]);
+            const created = await createUser(newUser);
+            setUsers([...users, created]);
             setShowModal(false);
-            setNewCustomer({ first_name: "", last_name: "", email: "", phone_number: "", address: "" });
+            setNewUser({ identification: "", name: "", email: "", password: "", type: "" });
         } catch (error) {
-            console.error("❌ Error al agregar cliente:", error);
+            console.error("❌ Error al agregar User:", error);
         }
     };
 
-    // 📌 Editar cliente
-    const handleUpdateCustomer = async () => {
-        try {
-            const updated = await updateCustomer({
-                ...editingCustomer,
-                id: String(editingCustomer.id),
-            });
+    // 📌 Editar User
+    const handleEditUser = (user) => {
+        console.log("🖊️ Editar usuario:", user); // Debug
 
-            setCustomers(customers.map(c => (c.id === updated.id ? updated : c)));
+        setEditingUser({
+            id: user.id,
+            identification: user.identification || "",
+            name: user.name || "",
+            email: user.email || "",
+            type: user.type || "",
+        });
+
+        setShowEditModal(true);
+    };
+
+    // 📌 Actualizar User
+    const handleUpdateUser = async () => {
+        try {
+            if (!editingUser.id) {
+                console.error("❌ No hay ID de usuario para actualizar.");
+                return;
+            }
+
+            // 🔍 Asegurar que se envían los datos correctos
+            const updatedUserData = {
+                identification: editingUser.identification,
+                name: editingUser.name,
+                email: editingUser.email,
+                password: editingUser.password || "defaultPassword123", // Agregar password si no se ingresa
+                type: editingUser.type,
+            };
+
+            console.log("📤 Enviando datos de actualización:", updatedUserData); // Debug
+
+            const updated = await updateUser({ ...updatedUserData, id: editingUser.id });
+
+            setUsers(users.map(u => (u.id === updated.id ? updated : u)));
             setShowEditModal(false);
-            setEditingCustomer(null);
+            setEditingUser(null);
         } catch (error) {
-            console.error("❌ Error al actualizar cliente:", error);
+            console.error("❌ Error al actualizar User:", error.response?.data || error.message);
         }
     };
 
-    // 📌 Eliminar cliente
-    const handleDeleteCustomer = async () => {
+    // 📌 Eliminar User
+    const handleDeleteUser = async () => {
         try {
-            await deleteCustomer(deletingCustomer.id);
-            setCustomers(customers.filter(c => c.id !== deletingCustomer.id));
-            setShowDeleteModal(false);
-            setDeletingCustomer(null);
+            if (!deletingUser) {
+                console.error("❌ No se ha seleccionado un usuario para eliminar");
+                return;
+            }
+
+            // Llamada a la API para eliminar el usuario
+            const response = await deleteUser(deletingUser.id);
+            console.log("✅ Respuesta de eliminación:", response); // Verifica la respuesta de la API
+
+            // Actualiza la lista de usuarios en el frontend
+            setUsers(users.filter(u => u.id !== deletingUser.id));
+            setShowDeleteModal(false); // Cierra el modal
+            setDeletingUser(null); // Limpia el estado de usuario a eliminar
         } catch (error) {
-            console.error("❌ Error al eliminar cliente:", error);
+            console.error("❌ Error al eliminar User:", error.response?.data || error.message);
         }
     };
 
@@ -77,7 +114,7 @@ export default function ClientsPage() {
         <div className="container mt-5">
             <div className="card shadow-lg">
                 <div className="card-header bg-dark text-white text-center">
-                    <h2 className="fw-bold">📋 Lista de Clientes</h2>
+                    <h2 className="fw-bold">📋 Lista de Usuarios</h2>
                 </div>
 
                 <div className="card-body">
@@ -86,54 +123,52 @@ export default function ClientsPage() {
                         <input
                             type="text"
                             className="form-control w-50"
-                            placeholder="🔍 Buscar cliente..."
+                            placeholder="🔍 Buscar Usuario..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
-                        <button className="btn btn-success" onClick={() => setShowModal(true)}>➕ Agregar Cliente</button>
+                        <button className="btn btn-success" onClick={() => setShowModal(true)}>➕ Agregar Usuario</button>
                     </div>
 
-                    {/* Tabla de clientes */}
+                    {/* Tabla de Usuarios */}
                     <div className="table-responsive">
                         <table className="table table-bordered table-hover text-center">
                             <thead className="table-dark">
                                 <tr>
                                     <th>ID</th>
+                                    <th>Identificación</th>
                                     <th>Nombre</th>
-                                    <th>Apellido</th>
-                                    <th>Correo</th>
-                                    <th>Teléfono</th>
-                                    <th>Dirección</th>
+                                    <th>Email</th>
+                                    <th>Tipo</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredCustomers.map((customer, index) => (
-                                    <tr key={customer.id} className={index % 2 === 0 ? "table-warning" : "table-info"}>
-                                        <td>{customer.id}</td>
-                                        <td>{customer.first_name}</td>
-                                        <td>{customer.last_name}</td>
-                                        <td>{customer.email}</td>
-                                        <td>{customer.phone_number}</td>
-                                        <td>{customer.address}</td>
+                                {filteredUsers.map(user => (
+                                    <tr key={user.id} className="table-light">
+                                        <td>{user.id}</td>
+                                        <td>{user.identification}</td>
+                                        <td>{user.name}</td>
+                                        <td>{user.email}</td>
+                                        <td>{user.type}</td>
                                         <td>
-                                            <button 
-                                                className="btn btn-primary btn-sm mx-1" 
-                                                onClick={() => { 
-                                                    setEditingCustomer({
-                                                        id: String(customer.id),
-                                                        first_name: customer.first_name || "",
-                                                        last_name: customer.last_name || "",
-                                                        email: customer.email || "",
-                                                        phone_number: customer.phone_number || "",
-                                                        address: customer.address || "",
-                                                    });
-                                                    setShowEditModal(true); 
-                                                }}
+                                            <button
+                                                className="btn btn-primary btn-sm mx-1"
+                                                onClick={() => handleEditUser(user)}
                                             >
                                                 ✏️ Editar
                                             </button>
-                                            <button className="btn btn-danger btn-sm mx-1" onClick={() => { setDeletingCustomer(customer); setShowDeleteModal(true); }}>🗑️ Eliminar</button>
+
+                                            <button
+                                                className="btn btn-danger btn-sm mx-1"
+                                                onClick={() => {
+                                                    console.log("🗑️ Eliminando usuario:", user);
+                                                    setDeletingUser(user); // Pasa el usuario a eliminar
+                                                    setShowDeleteModal(true); // Muestra el modal de eliminación
+                                                }}
+                                            >
+                                                🗑️ Eliminar
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}
@@ -143,58 +178,33 @@ export default function ClientsPage() {
                 </div>
             </div>
 
-            {/* Modal para Agregar Cliente */}
-            {showModal && (
-                <div className="modal show d-block">
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header bg-success text-white">
-                                <h5 className="modal-title">➕ Agregar Cliente</h5>
-                                <button className="btn-close" onClick={() => setShowModal(false)}></button>
-                            </div>
-                            <div className="modal-body">
-                                <input type="text" className="form-control mb-2" placeholder="Nombre" value={newCustomer.first_name} onChange={(e) => setNewCustomer({ ...newCustomer, first_name: e.target.value })} />
-                                <input type="text" className="form-control mb-2" placeholder="Apellido" value={newCustomer.last_name} onChange={(e) => setNewCustomer({ ...newCustomer, last_name: e.target.value })} />
-                                <input type="email" className="form-control mb-2" placeholder="Correo" value={newCustomer.email} onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })} />
-                                <input type="text" className="form-control mb-2" placeholder="Teléfono" value={newCustomer.phone_number} onChange={(e) => setNewCustomer({ ...newCustomer, phone_number: e.target.value })} />
-                                <input type="text" className="form-control mb-2" placeholder="Dirección" value={newCustomer.address} onChange={(e) => setNewCustomer({ ...newCustomer, address: e.target.value })} />
-                            </div>
-                            <div className="modal-footer">
-                                <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
-                                <button className="btn btn-success" onClick={handleSaveCustomer}>Guardar</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Modal para Editar Cliente */}
-            {showEditModal && editingCustomer && (
+            {/* Modal para Editar Usuario */}
+            {showEditModal && editingUser && (
                 <div className="modal show d-block">
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header bg-primary text-white">
-                                <h5 className="modal-title">✏️ Editar Cliente</h5>
+                                <h5 className="modal-title">✏️ Editar Usuario</h5>
                                 <button className="btn-close" onClick={() => setShowEditModal(false)}></button>
                             </div>
                             <div className="modal-body">
-                                <input type="text" className="form-control mb-2" placeholder="Nombre" value={editingCustomer.first_name} onChange={(e) => setEditingCustomer({ ...editingCustomer, first_name: e.target.value })} />
-                                <input type="text" className="form-control mb-2" placeholder="Apellido" value={editingCustomer.last_name} onChange={(e) => setEditingCustomer({ ...editingCustomer, last_name: e.target.value })} />
-                                <input type="email" className="form-control mb-2" placeholder="Correo" value={editingCustomer.email} onChange={(e) => setEditingCustomer({ ...editingCustomer, email: e.target.value })} />
-                                <input type="text" className="form-control mb-2" placeholder="Teléfono" value={editingCustomer.phone_number} onChange={(e) => setEditingCustomer({ ...editingCustomer, phone_number: e.target.value })} />
-                                <input type="text" className="form-control mb-2" placeholder="Dirección" value={editingCustomer.address} onChange={(e) => setEditingCustomer({ ...editingCustomer, address: e.target.value })} />
+                                <input type="text" className="form-control mb-2" placeholder="Identificación" value={editingUser.identification} onChange={(e) => setEditingUser({ ...editingUser, identification: e.target.value })} />
+                                <input type="text" className="form-control mb-2" placeholder="Nombre" value={editingUser.name} onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })} />
+                                <input type="email" className="form-control mb-2" placeholder="Correo" value={editingUser.email} onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })} />
+                                <input type="password" className="form-control mb-2" placeholder="Contraseña" value={editingUser.password || ""} onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })} />
+                                <input type="text" className="form-control mb-2" placeholder="Tipo" value={editingUser.type} onChange={(e) => setEditingUser({ ...editingUser, type: e.target.value })} />
                             </div>
                             <div className="modal-footer">
                                 <button className="btn btn-secondary" onClick={() => setShowEditModal(false)}>Cancelar</button>
-                                <button className="btn btn-primary" onClick={handleUpdateCustomer}>Actualizar</button>
+                                <button className="btn btn-primary" onClick={handleUpdateUser}>Actualizar</button>
                             </div>
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* Modal para Eliminar Cliente */}
-            {showDeleteModal && deletingCustomer && (
+            {/* Modal para Eliminar Usuario */}
+            {showDeleteModal && deletingUser && (
                 <div className="modal show d-block">
                     <div className="modal-dialog">
                         <div className="modal-content">
@@ -203,16 +213,17 @@ export default function ClientsPage() {
                                 <button className="btn-close" onClick={() => setShowDeleteModal(false)}></button>
                             </div>
                             <div className="modal-body">
-                                <p>¿Estás seguro de que deseas eliminar al cliente <strong>{deletingCustomer.first_name} {deletingCustomer.last_name}</strong>?</p>
+                                <p>¿Estás seguro de que deseas eliminar al usuario <strong>{deletingUser.name}</strong>?</p>
                             </div>
                             <div className="modal-footer">
                                 <button className="btn btn-secondary" onClick={() => setShowDeleteModal(false)}>Cancelar</button>
-                                <button className="btn btn-danger" onClick={handleDeleteCustomer}>Eliminar</button>
+                                <button className="btn btn-danger" onClick={handleDeleteUser}>Eliminar</button>
                             </div>
                         </div>
                     </div>
                 </div>
             )}
+
         </div>
     );
 }
