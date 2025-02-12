@@ -18,18 +18,27 @@ export const getUsers = async () => {
     }
 };
 
-
-
 // 🔹 Crear un User
-export const createUser = async (UserData) => {
+export const createUser = async (userData) => {
     try {
-        const response = await axios.post(CREATE_API, UserData);
+        console.log("📤 Enviando datos del usuario:", userData);
+
+        const response = await axios.post(CREATE_API, userData, {
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json" // ✅ Asegurar compatibilidad con la API
+            }
+        });
+
+        console.log("✅ Usuario creado correctamente:", response.data);
         return response.data;
     } catch (error) {
-        console.error("❌ Error al agregar User:", error);
+        console.error("❌ Error en createUser:", error.response?.data || error.message);
         throw error;
     }
 };
+
+
 
 // 🔹 Actualizar User
 export const updateUser = async (UserData) => {
@@ -47,10 +56,19 @@ export const updateUser = async (UserData) => {
 // 🔹 Eliminar User
 export const deleteUser = async (id) => {
     try {
-        await axios.delete(`${DELETE_API}/${id}`);
-        return { id };
+        console.log(`🗑️ Intentando eliminar usuario con ID: ${id}`);
+        const response = await axios.delete(`${DELETE_API}/${id}`);
+        console.log("✅ Usuario eliminado:", response.data);
+        return response.data;
     } catch (error) {
-        console.error("❌ Error al eliminar User:", error);
+        console.error("❌ Error en deleteUser:", error.response?.data || error.message);
+        if (error.response) {
+            console.error("🔴 Respuesta del servidor:", error.response.status, error.response.data);
+        } else if (error.request) {
+            console.error("⚠️ No se recibió respuesta del servidor:", error.request);
+        } else {
+            console.error("❌ Error al configurar la solicitud:", error.message);
+        }
         throw error;
     }
 };

@@ -47,13 +47,17 @@ export default function UsersPage() {
     // 📌 Guardar nuevo usuario y actualizar la lista en tiempo real
     const handleSaveUser = async () => {
         try {
-            await createUser(newUser);
+            console.log("📤 Intentando agregar usuario con datos:", newUser); // Debug
+
+            const response = await createUser(newUser);
+            console.log("✅ Respuesta del servidor:", response);
+
             setShowModal(false);
             setNewUser({ identification: "", name: "", email: "", password: "", type: "" });
-            fetchUsers(); // ✅ Recargar lista de usuarios
-            showMessage("✅ Usuario agregado correctamente"); // ✅ Mostrar mensaje
+            fetchUsers();
+            showMessage("✅ Usuario agregado correctamente");
         } catch (error) {
-            console.error("❌ Error al agregar User:", error);
+            console.error("❌ Error al agregar User:", error.response?.data || error.message);
         }
     };
 
@@ -76,6 +80,25 @@ export default function UsersPage() {
             console.error("❌ Error al actualizar User:", error);
         }
     };
+
+    const handleDeleteUser = (user) => {
+        setDeletingUser(user);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDeleteUser = async () => {
+        try {
+            if (!deletingUser?.id) return console.error("❌ No hay ID de usuario para eliminar.");
+            await deleteUser(deletingUser.id);
+            setShowDeleteModal(false);
+            setDeletingUser(null);
+            fetchUsers(); // ✅ Recargar la lista de usuarios
+            showMessage(`✅ Usuario ${deletingUser.name} eliminado correctamente`); // ✅ Mostrar mensaje
+        } catch (error) {
+            console.error("❌ Error al eliminar User:", error);
+        }
+    };
+
 
     return (
         <div className="container mt-5">
@@ -127,6 +150,10 @@ export default function UsersPage() {
                                             <button className="btn btn-primary btn-sm mx-1" onClick={() => handleEditUser(user)}>
                                                 ✏️ Editar
                                             </button>
+                                            <button className="btn btn-danger btn-sm mx-1" onClick={() => handleDeleteUser(user)}>
+                                                🗑️ Eliminar
+                                            </button>
+
                                         </td>
                                     </tr>
                                 ))}
@@ -182,6 +209,28 @@ export default function UsersPage() {
                     </div>
                 </div>
             )}
+            {/* Modal para Eliminar Usuario */}
+            {showDeleteModal && deletingUser && (
+                <div className="modal fade show d-block" tabIndex="-1">
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header bg-danger text-white">
+                                <h5 className="modal-title">🗑️ Confirmar Eliminación</h5>
+                                <button className="btn-close" onClick={() => setShowDeleteModal(false)}></button>
+                            </div>
+                            <div className="modal-body text-center">
+                                <p>¿Estás seguro de que deseas eliminar al usuario?</p>
+                                <p><strong>{deletingUser.identification} - {deletingUser.name}</strong></p>
+                            </div>
+                            <div className="modal-footer">
+                                <button className="btn btn-secondary" onClick={() => setShowDeleteModal(false)}>Cancelar</button>
+                                <button className="btn btn-danger" onClick={confirmDeleteUser}>Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 }
