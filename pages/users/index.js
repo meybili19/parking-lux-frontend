@@ -11,6 +11,7 @@ export default function UsersPage() {
     const [newUser, setNewUser] = useState({ identification: "", name: "", email: "", password: "", type: "" });
     const [editingUser, setEditingUser] = useState(null);
     const [deletingUser, setDeletingUser] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(""); // ✅ Estado para mostrar mensajes
 
     // 📌 Cargar Bootstrap JS para que los modales funcionen correctamente
     useEffect(() => {
@@ -35,6 +36,14 @@ export default function UsersPage() {
         fetchUsers();
     }, []);
 
+    // 📌 Mostrar mensaje temporalmente
+    const showMessage = (message) => {
+        setSuccessMessage(message);
+        setTimeout(() => {
+            setSuccessMessage(""); // ✅ Ocultar mensaje después de 3 segundos
+        }, 3000);
+    };
+
     // 📌 Guardar nuevo usuario y actualizar la lista en tiempo real
     const handleSaveUser = async () => {
         try {
@@ -42,6 +51,7 @@ export default function UsersPage() {
             setShowModal(false);
             setNewUser({ identification: "", name: "", email: "", password: "", type: "" });
             fetchUsers(); // ✅ Recargar lista de usuarios
+            showMessage("✅ Usuario agregado correctamente"); // ✅ Mostrar mensaje
         } catch (error) {
             console.error("❌ Error al agregar User:", error);
         }
@@ -61,6 +71,7 @@ export default function UsersPage() {
             setShowEditModal(false);
             setEditingUser(null);
             fetchUsers(); // ✅ Recargar lista de usuarios
+            showMessage("✅ Usuario actualizado correctamente"); // ✅ Mostrar mensaje
         } catch (error) {
             console.error("❌ Error al actualizar User:", error);
         }
@@ -74,6 +85,11 @@ export default function UsersPage() {
                 </div>
 
                 <div className="card-body">
+                    {/* 📢 Mensaje de éxito */}
+                    {successMessage && (
+                        <div className="alert alert-success text-center fw-bold">{successMessage}</div>
+                    )}
+
                     {/* Barra de búsqueda y botón de agregar */}
                     <div className="d-flex justify-content-between mb-4">
                         <input
@@ -110,12 +126,6 @@ export default function UsersPage() {
                                         <td>
                                             <button className="btn btn-primary btn-sm mx-1" onClick={() => handleEditUser(user)}>
                                                 ✏️ Editar
-                                            </button>
-                                            <button className="btn btn-danger btn-sm mx-1" onClick={() => {
-                                                setDeletingUser(user);
-                                                setShowDeleteModal(true);
-                                            }}>
-                                                🗑️ Eliminar
                                             </button>
                                         </td>
                                     </tr>
@@ -161,10 +171,8 @@ export default function UsersPage() {
                                 <button className="btn-close" onClick={() => setShowEditModal(false)}></button>
                             </div>
                             <div className="modal-body">
-                                <input type="text" className="form-control mb-2" placeholder="Identificación" value={editingUser.identification} onChange={(e) => setEditingUser({ ...editingUser, identification: e.target.value })} />
                                 <input type="text" className="form-control mb-2" placeholder="Nombre" value={editingUser.name} onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })} />
                                 <input type="email" className="form-control mb-2" placeholder="Correo" value={editingUser.email} onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })} />
-                                <input type="text" className="form-control mb-2" placeholder="Tipo" value={editingUser.type} onChange={(e) => setEditingUser({ ...editingUser, type: e.target.value })} />
                             </div>
                             <div className="modal-footer">
                                 <button className="btn btn-secondary" onClick={() => setShowEditModal(false)}>Cancelar</button>
