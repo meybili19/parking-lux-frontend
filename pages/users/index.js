@@ -113,12 +113,12 @@ export default function UsersPage() {
                         <div className="alert alert-success text-center fw-bold">{successMessage}</div>
                     )}
 
-                    {/* Barra de búsqueda y botón de agregar */}
+                    {/* Barra de búsqueda */}
                     <div className="d-flex justify-content-between mb-4">
                         <input
                             type="text"
                             className="form-control w-50"
-                            placeholder="🔍 Buscar Usuario..."
+                            placeholder="🔍 Buscar usuario..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
@@ -139,24 +139,29 @@ export default function UsersPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {users.map(user => (
-                                    <tr key={user.id} className="table-light">
-                                        <td>{user.id}</td>
-                                        <td>{user.identification}</td>
-                                        <td>{user.name}</td>
-                                        <td>{user.email}</td>
-                                        <td>{user.type}</td>
-                                        <td>
-                                            <button className="btn btn-primary btn-sm mx-1" onClick={() => handleEditUser(user)}>
-                                                ✏️ Editar
-                                            </button>
-                                            <button className="btn btn-danger btn-sm mx-1" onClick={() => handleDeleteUser(user)}>
-                                                🗑️ Eliminar
-                                            </button>
-
-                                        </td>
-                                    </tr>
-                                ))}
+                                {users
+                                    .filter(user =>
+                                        Object.values(user).some(value =>
+                                            value.toString().toLowerCase().includes(search.toLowerCase())
+                                        )
+                                    )
+                                    .map(user => (
+                                        <tr key={user.id} className="table-light">
+                                            <td>{user.id}</td>
+                                            <td>{user.identification}</td>
+                                            <td>{user.name}</td>
+                                            <td>{user.email}</td>
+                                            <td>{user.type}</td>
+                                            <td>
+                                                <button className="btn btn-primary btn-sm mx-1" onClick={() => handleEditUser(user)}>
+                                                    ✏️ Editar
+                                                </button>
+                                                <button className="btn btn-danger btn-sm mx-1" onClick={() => handleDeleteUser(user)}>
+                                                    🗑️ Eliminar
+                                                    </button>
+                                            </td>
+                                        </tr>
+                                    ))}
                             </tbody>
                         </table>
                     </div>
