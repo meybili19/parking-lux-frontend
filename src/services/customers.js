@@ -1,56 +1,56 @@
 import axios from "axios";
 
-const READ_API = "http://localhost:8082/customers";
-const CREATE_API = "http://localhost:8081/customers";
-const UPDATE_API = "http://localhost:8083/customers";
-const DELETE_API = "http://localhost:8084/customers";
+const READ_API = "http://52.3.1.74:5002/all/users";
+const CREATE_API = "http://98.85.44.62:5000/users";
+const UPDATE_API = "http://44.212.131.29:5001/users";
+const DELETE_API = "http://34.196.106.116/users";
 
-// 🔹 Obtener lista de clientes desde la API REST
-export const getCustomers = async () => {
+// 🔹 Obtener lista de Users desde la API REST
+export const getUsers = async () => {
     try {
-        const res = await fetch("http://localhost:8082/customers"); // ✅ Endpoint correcto de REST API
+        const res = await fetch(READ_API); // ✅ Endpoint correcto de REST API
         const data = await res.json(); // 🔹 Convertir la respuesta a JSON
-        console.log("📡 Clientes recibidos:", data);
-        return data; // ✅ La API ya devuelve un array de clientes
+        console.log("📡 Users recibidos:", data);
+        return data; // ✅ La API ya devuelve un array de Users
     } catch (error) {
-        console.error("❌ Error obteniendo clientes:", error);
+        console.error("❌ Error obteniendo Users:", error);
         throw error;
     }
 };
 
 
 
-// 🔹 Crear un cliente
-export const createCustomer = async (customerData) => {
+// 🔹 Crear un User
+export const createUser = async (UserData) => {
     try {
-        const response = await axios.post(CREATE_API, customerData);
+        const response = await axios.post(CREATE_API, UserData);
         return response.data;
     } catch (error) {
-        console.error("❌ Error al agregar cliente:", error);
+        console.error("❌ Error al agregar User:", error);
         throw error;
     }
 };
 
-// 🔹 Actualizar cliente
-export const updateCustomer = async (customerData) => {
+// 🔹 Actualizar User
+export const updateUser = async (UserData) => {
     try {
-        console.log("🔍 Actualizando cliente con ID:", customerData.id);
-        const response = await axios.put(`${UPDATE_API}/${customerData.id}`, customerData);
+        console.log("🔍 Actualizando User con ID:", UserData.id);
+        const response = await axios.put(`${UPDATE_API}/${UserData.id}`, UserData);
         return response.data;
     } catch (error) {
-        console.error("❌ Error al actualizar cliente:", error);
+        console.error("❌ Error al actualizar User:", error);
         throw error;
     }
 };
 
 
-// 🔹 Eliminar cliente
-export const deleteCustomer = async (id) => {
+// 🔹 Eliminar User
+export const deleteUser = async (id) => {
     try {
         await axios.delete(`${DELETE_API}/${id}`);
         return { id };
     } catch (error) {
-        console.error("❌ Error al eliminar cliente:", error);
+        console.error("❌ Error al eliminar User:", error);
         throw error;
     }
 };
