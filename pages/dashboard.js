@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import "bootstrap/dist/css/bootstrap.min.css";
 import UsersPage from "./users"; // Importamos la página de usuarios
+import { FaHome } from "react-icons/fa"; // Importamos un icono de FontAwesome
 
 export default function DashboardPage() {
     const [selectedSection, setSelectedSection] = useState(null);
@@ -18,9 +19,9 @@ export default function DashboardPage() {
             {/* Navbar */}
             <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
                 <div className="container">
-                    <a 
-                        className="navbar-brand fw-bold" 
-                        style={{ cursor: "pointer" }} 
+                    <a
+                        className="navbar-brand fw-bold"
+                        style={{ cursor: "pointer" }}
                         onClick={() => setSelectedSection(null)}
                     >
                         PARKING LUX
@@ -31,6 +32,7 @@ export default function DashboardPage() {
                     </button>
                     <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav ms-auto text-center">
+                            <li className="nav-item"><a className="nav-link" href="#">Registrar Parqueadero</a></li>
                             <li className="nav-item">
                                 <a className="nav-link" style={{ cursor: "pointer" }} onClick={() => setSelectedSection("users")}>
                                     Registrar Usuario
@@ -40,6 +42,11 @@ export default function DashboardPage() {
                             <li className="nav-item"><a className="nav-link" href="#">Registrar Reserva</a></li>
                             <li className="nav-item"><a className="nav-link" href="#">Control de Acceso</a></li>
                         </ul>
+
+                        {/* 🔹 Icono para volver a Index.js (página principal) */}
+                        <Link href="/" className="nav-link text-white fs-4 ms-3" title="Ir a inicio">
+                            <FaHome />
+                        </Link>
                     </div>
                 </div>
             </nav>
