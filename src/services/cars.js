@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const CREATE_CAR_API = "http://18.232.8.105:3000/api/vehicle/register";
+const CREATE_CAR_API = "http://18.232.8.105:3004/api/vehicle/register";
 const UPDATE_CAR_API = "http://52.203.50.226:3001/api/vehicle";
 const DELETE_CAR_API = "http://23.21.100.227:3002/api/vehicle";
 const GET_CAR_API = "http://3.226.178.228:3003/api/vehicle"; 
