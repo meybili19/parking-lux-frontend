@@ -4,7 +4,7 @@ import axios from "axios";
 const CREATE_RESERVATION_API = "http://54.146.206.135:4000/reservations";
 const UPDATE_RESERVATION_API = "http://54.173.122.236:4001/reservations/update";
 const DELETE_RESERVATION_API = "http://98.85.118.42:4002/reservations/delete";
-const GRAPHQL_RESERVATIONS_API = "http://localhost:4003/reservation";
+const GRAPHQL_RESERVATIONS_API = "http://75.101.158.182:4003/reservation";
 const VEHICLE_API = "http://3.226.178.228:3003/api/vehicle"; 
 const PARKING_LOT_API = "http://34.196.247.137:7003/parkinglots";
 //
