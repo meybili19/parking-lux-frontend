@@ -4,7 +4,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import UsersPage from "./users"; // Importamos la página de usuarios
 import ParkingLotPage from "./parkinglot"; // Importamos la página de parqueaderos
 import CarsPage from "./cars"; // Importamos la página de carros
+import AccessControl from "./access/control"; // Importar Control de Acceso
+import ReservationsPage from "./reservations"; 
+
 import { FaHome } from "react-icons/fa"; // Importamos un icono de FontAwesome
+
 
 export default function DashboardPage() {
     const [selectedSection, setSelectedSection] = useState(null);
@@ -48,8 +52,16 @@ export default function DashboardPage() {
                                     Registrar Vehículo
                                 </a>
                             </li>
-                            <li className="nav-item"><a className="nav-link" href="#">Registrar Reserva</a></li>
-                            <li className="nav-item"><a className="nav-link" href="#">Control de Acceso</a></li>
+                            <li className="nav-item">
+                                <a className="nav-link" style={{ cursor: "pointer" }} onClick={() => setSelectedSection("reservations")}>
+                                    Register Reservation
+                                </a>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link" style={{ cursor: "pointer" }} onClick={() => setSelectedSection("access")}>
+                                    Access Control
+                                </a>
+                            </li>
                         </ul>
 
                         {/* 🔹 Icono para volver a Index.js (página principal) */}
@@ -68,8 +80,12 @@ export default function DashboardPage() {
                     <ParkingLotPage />
                 ) : selectedSection === "cars" ? (
                     <CarsPage />
-                )
-                 : (
+                ) : selectedSection === "reservations" ? (
+                    <ReservationsPage  />
+                ) : selectedSection === "access" ? (
+                    <AccessControl   />
+                ) 
+                : (
                     <>
                         <h2 className="fw-bold">📌 Panel de Control - Gestión de Parqueadero</h2>
                         <p>Seleccione una de las opciones del menú para continuar.</p>
