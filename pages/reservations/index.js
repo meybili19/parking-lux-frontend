@@ -134,7 +134,7 @@ export default function ReservationsPage() {
         <div className="container mt-5">
             <div className="card shadow-lg">
                 <div className="card-header bg-dark text-white text-center">
-                    <h2 className="fw-bold">📋 Lista de Reservas</h2>
+                    <h2 className="fw-bold">📋 Reservation List</h2>
                 </div>
 
                 <div className="card-body">
@@ -144,11 +144,11 @@ export default function ReservationsPage() {
                         <input
                             type="text"
                             className="form-control w-50"
-                            placeholder="🔍 Buscar reserva..."
+                            placeholder="🔍Search reservation..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
-                        <button className="btn btn-success" onClick={() => setShowModal(true)}>➕ Agregar Reserva</button>
+                        <button className="btn btn-success" onClick={() => setShowModal(true)}>➕ Add Reservation</button>
                     </div>
 
                     <div className="table-responsive">

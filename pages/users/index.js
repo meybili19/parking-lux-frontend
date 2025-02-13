@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getUsers, getUserById,createUser, updateUser, deleteUser } from "../../src/services/users";
+import { getUsers, getUserById, createUser, updateUser, deleteUser } from "../../src/services/users";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function UsersPage() {
@@ -44,43 +44,44 @@ export default function UsersPage() {
         }, 3000);
     };
 
-    // 📌 Guardar nuevo usuario y actualizar la lista en tiempo real
+    // 📌 Save a new user and update the list in real-time
     const handleSaveUser = async () => {
         try {
-            console.log("📤 Intentando agregar usuario con datos:", newUser); // Debug
+            console.log("📤 Attempting to add user with data:", newUser); // Debug
 
             const response = await createUser(newUser);
-            console.log("✅ Respuesta del servidor:", response);
+            console.log("✅ Server response:", response);
 
             setShowModal(false);
             setNewUser({ identification: "", name: "", email: "", password: "", type: "" });
             fetchUsers();
-            showMessage("✅ Usuario agregado correctamente");
+            showMessage("✅ User added successfully");
         } catch (error) {
-            console.error("❌ Error al agregar User:", error.response?.data || error.message);
+            console.error("❌ Error adding user:", error.response?.data || error.message);
         }
     };
 
-    // 📌 Obtener usuario antes de editar
+
+    // 📌 Retrieve user before editing
     const handleEditUser = async (user) => {
         try {
-            const userData = await getUserById(user.id); // ✅ Obtener usuario desde la API
-            setEditingUser({ ...userData, password: "" }); // 🔹 La contraseña no se muestra
+            const userData = await getUserById(user.id); // ✅ Fetch user from the API
+            setEditingUser({ ...userData, password: "" }); // 🔹 Password is not displayed
             setShowEditModal(true);
         } catch (error) {
-            console.error("❌ Error al obtener datos del usuario:", error);
+            console.error("❌ Error retrieving user data:", error);
         }
     };
 
-    // 📌 Actualizar usuario
+    // 📌 Update user
     const handleUpdateUser = async () => {
         try {
             if (!editingUser.id) {
-                console.error("❌ No hay ID de usuario para actualizar.");
+                console.error("❌ No user ID available for update.");
                 return;
             }
 
-            // 🔹 Si no se proporciona una nueva contraseña, no la enviamos
+            // 🔹 If no new password is provided, do not send it
             const userToUpdate = { ...editingUser };
             if (!userToUpdate.password) {
                 delete userToUpdate.password;
@@ -90,11 +91,12 @@ export default function UsersPage() {
             setShowEditModal(false);
             setEditingUser(null);
             fetchUsers();
-            showMessage("✅ Usuario actualizado correctamente");
+            showMessage("✅ User updated successfully");
         } catch (error) {
-            console.error("❌ Error al actualizar usuario:", error);
+            console.error("❌ Error updating user:", error);
         }
     };
+
 
     const handleDeleteUser = (user) => {
         setDeletingUser(user);
@@ -103,54 +105,50 @@ export default function UsersPage() {
 
     const confirmDeleteUser = async () => {
         try {
-            if (!deletingUser?.id) return console.error("❌ No hay ID de usuario para eliminar.");
+            if (!deletingUser?.id) return console.error("❌ No user ID available for deletion.");
             await deleteUser(deletingUser.id);
             setShowDeleteModal(false);
             setDeletingUser(null);
-            fetchUsers(); // ✅ Recargar la lista de usuarios
-            showMessage(`✅ Usuario ${deletingUser.name} eliminado correctamente`); // ✅ Mostrar mensaje
+            fetchUsers(); // ✅ Refresh the user list
+            showMessage(`✅ User ${deletingUser.name} deleted successfully`); // ✅ Display message
         } catch (error) {
-            console.error("❌ Error al eliminar User:", error);
+            console.error("❌ Error deleting user:", error);
         }
     };
-
 
     return (
         <div className="container mt-5">
             <div className="card shadow-lg">
                 <div className="card-header bg-dark text-white text-center">
-                    <h2 className="fw-bold">📋 Lista de Usuarios</h2>
+                    <h2 className="fw-bold">📋 User List</h2>
                 </div>
-
                 <div className="card-body">
-                    {/* 📢 Mensaje de éxito */}
+                    {/* 📢 Success Message */}
                     {successMessage && (
                         <div className="alert alert-success text-center fw-bold">{successMessage}</div>
                     )}
-
-                    {/* Barra de búsqueda */}
+                    {/* Search Bar */}
                     <div className="d-flex justify-content-between mb-4">
                         <input
                             type="text"
                             className="form-control w-50"
-                            placeholder="🔍 Buscar usuario..."
+                            placeholder="🔍 Search user..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
-                        <button className="btn btn-success" onClick={() => setShowModal(true)}>➕ Agregar Usuario</button>
+                        <button className="btn btn-success" onClick={() => setShowModal(true)}>➕ Add User</button>
                     </div>
-
-                    {/* Tabla de Usuarios */}
+                    {/* User Table */}
                     <div className="table-responsive">
                         <table className="table table-bordered table-hover text-center">
                             <thead className="table-dark">
                                 <tr>
                                     <th>ID</th>
-                                    <th>Identificación</th>
-                                    <th>Nombre</th>
+                                    <th>Identification</th>
+                                    <th>Name</th>
                                     <th>Email</th>
-                                    <th>Tipo</th>
-                                    <th>Acciones</th>
+                                    <th>Type</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -169,11 +167,11 @@ export default function UsersPage() {
                                             <td>{user.type}</td>
                                             <td>
                                                 <button className="btn btn-primary btn-sm mx-1" onClick={() => handleEditUser(user)}>
-                                                    ✏️ Editar
+                                                    ✏️ Edit
                                                 </button>
                                                 <button className="btn btn-danger btn-sm mx-1" onClick={() => handleDeleteUser(user)}>
-                                                    🗑️ Eliminar
-                                                    </button>
+                                                    🗑️ Delete
+                                                </button>
                                             </td>
                                         </tr>
                                     ))}
@@ -182,112 +180,109 @@ export default function UsersPage() {
                     </div>
                 </div>
             </div>
-
-            {/* Modal para Agregar Usuario */}
+            {/* Modal to Add User */}
             {showModal && (
                 <div className="modal fade show d-block" tabIndex="-1">
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header bg-success text-white">
-                                <h5 className="modal-title">➕ Agregar Usuario</h5>
+                                <h5 className="modal-title">➕ Add User</h5>
                                 <button className="btn-close" onClick={() => setShowModal(false)}></button>
                             </div>
                             <div className="modal-body">
-                                <input type="text" className="form-control mb-2" placeholder="Identificación" value={newUser.identification} onChange={(e) => setNewUser({ ...newUser, identification: e.target.value })} />
-                                <input type="text" className="form-control mb-2" placeholder="Nombre" value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} />
-                                <input type="email" className="form-control mb-2" placeholder="Correo" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
-                                <input type="password" className="form-control mb-2" placeholder="Contraseña" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} />
-                                <input type="text" className="form-control mb-2" placeholder="Tipo" value={newUser.type} onChange={(e) => setNewUser({ ...newUser, type: e.target.value })} />
+                                <input type="text" className="form-control mb-2" placeholder="Identification" value={newUser.identification} onChange={(e) => setNewUser({ ...newUser, identification: e.target.value })} />
+                                <input type="text" className="form-control mb-2" placeholder="Name" value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} />
+                                <input type="email" className="form-control mb-2" placeholder="Email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
+                                <input type="password" className="form-control mb-2" placeholder="Password" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} />
+                                <input type="text" className="form-control mb-2" placeholder="Type" value={newUser.type} onChange={(e) => setNewUser({ ...newUser, type: e.target.value })} />
                             </div>
                             <div className="modal-footer">
-                                <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
-                                <button className="btn btn-success" onClick={handleSaveUser}>Guardar</button>
+                                <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
+                                <button className="btn btn-success" onClick={handleSaveUser}>Save</button>
                             </div>
                         </div>
                     </div>
                 </div>
             )}
-
-             {/* Modal para Editar Usuario */}
-             {showEditModal && editingUser && (
+            {/* Modal to Edit User */}
+            {showEditModal && editingUser && (
                 <div className="modal fade show d-block" tabIndex="-1">
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header bg-primary text-white">
-                                <h5 className="modal-title">✏️ Editar Usuario</h5>
+                                <h5 className="modal-title">✏️ Edit User</h5>
                                 <button className="btn-close" onClick={() => setShowEditModal(false)}></button>
                             </div>
                             <div className="modal-body">
                                 <input
                                     type="text"
                                     className="form-control mb-2"
-                                    placeholder="Identificación"
+                                    placeholder="Identification"
                                     value={editingUser.identification}
                                     onChange={(e) => setEditingUser({ ...editingUser, identification: e.target.value })}
                                 />
                                 <input
                                     type="text"
                                     className="form-control mb-2"
-                                    placeholder="Nombre"
+                                    placeholder="Name"
                                     value={editingUser.name}
                                     onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
                                 />
                                 <input
                                     type="email"
                                     className="form-control mb-2"
-                                    placeholder="Correo"
+                                    placeholder="Email"
                                     value={editingUser.email}
                                     onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
                                 />
                                 <input
                                     type="password"
                                     className="form-control mb-2"
-                                    placeholder="Nueva Contraseña (Opcional)"
+                                    placeholder="New Password (Optional)"
                                     value={editingUser.password}
                                     onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })}
                                 />
                                 <input
                                     type="text"
                                     className="form-control mb-2"
-                                    placeholder="Tipo"
+                                    placeholder="Type"
                                     value={editingUser.type}
                                     onChange={(e) => setEditingUser({ ...editingUser, type: e.target.value })}
                                 />
                             </div>
                             <div className="modal-footer">
                                 <button className="btn btn-secondary" onClick={() => setShowEditModal(false)}>
-                                    Cancelar
+                                    Cancel
                                 </button>
                                 <button className="btn btn-primary" onClick={handleUpdateUser}>
-                                    Actualizar
+                                    Update
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
             )}
-            {/* Modal para Eliminar Usuario */}
+            {/* Modal to Delete User */}
             {showDeleteModal && deletingUser && (
                 <div className="modal fade show d-block" tabIndex="-1">
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header bg-danger text-white">
-                                <h5 className="modal-title">🗑️ Confirmar Eliminación</h5>
+                                <h5 className="modal-title">🗑️ Confirm Deletion</h5>
                                 <button className="btn-close" onClick={() => setShowDeleteModal(false)}></button>
                             </div>
                             <div className="modal-body text-center">
-                                <p>¿Estás seguro de que deseas eliminar al usuario?</p>
+                                <p>Are you sure you want to delete this user?</p>
                                 <p><strong>{deletingUser.identification} - {deletingUser.name}</strong></p>
                             </div>
                             <div className="modal-footer">
-                                <button className="btn btn-secondary" onClick={() => setShowDeleteModal(false)}>Cancelar</button>
-                                <button className="btn btn-danger" onClick={confirmDeleteUser}>Eliminar</button>
+                                <button className="btn btn-secondary" onClick={() => setShowDeleteModal(false)}>Cancel</button>
+                                <button className="btn btn-danger" onClick={confirmDeleteUser}>Delete</button>
                             </div>
                         </div>
                     </div>
                 </div>
             )}
-
         </div>
     );
 }
