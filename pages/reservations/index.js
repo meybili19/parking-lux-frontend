@@ -68,7 +68,7 @@ export default function ReservationsPage() {
             fetchReservations(); // 🔄 Refrescar la lista después de agregar
         } catch (error) {
             console.error("❌ Error agregando reserva:", error);
-            setMessage("❌ Error al agregar la reserva.");
+            setMessage(error.message || "❌ Error al agregar la reserva.");
         }
     };
 
@@ -160,6 +160,7 @@ export default function ReservationsPage() {
                                     <th>Parking Lot</th>
                                     <th>Start Date</th>
                                     <th>End Date</th>
+                                    <th>Total Amount ($)</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -180,6 +181,7 @@ export default function ReservationsPage() {
                                             </td>
                                             <td>{new Date(parseInt(reservation.startDate)).toLocaleString()}</td>
                                             <td>{new Date(parseInt(reservation.endDate)).toLocaleString()}</td>
+                                            <td>${reservation.totalAmount ? reservation.totalAmount.toFixed(2) : "N/A"}</td>
                                             <td>
                                                 <button className="btn btn-primary btn-sm mx-1" onClick={() => handleEditReservation(reservation)}>✏️ Edit</button>
                                                 <button className="btn btn-danger btn-sm mx-1" onClick={() => handleDeleteReservation(reservation)}>🗑️ Delete</button>

@@ -73,27 +73,28 @@ export default function UsersPage() {
     };
 
     // 📌 Actualizar usuario
-const handleUpdateUser = async () => {
-    try {
-        if (!editingUser.id) {
-            console.error("❌ No hay ID de usuario para actualizar.");
-            return;
+    const handleUpdateUser = async () => {
+        try {
+            if (!editingUser.id) {
+                console.error("❌ No hay ID de usuario para actualizar.");
+                return;
+            }
+
+            // 🔹 Si no se proporciona una nueva contraseña, no la enviamos
+            const userToUpdate = { ...editingUser };
+            if (!userToUpdate.password) {
+                delete userToUpdate.password;
+            }
+
+            await updateUser(userToUpdate);
+            setShowEditModal(false);
+            setEditingUser(null);
+            fetchUsers();
+            showMessage("✅ Usuario actualizado correctamente");
+        } catch (error) {
+            console.error("❌ Error al actualizar usuario:", error);
         }
-
-        // 🔹 Eliminamos el campo "password" si está vacío para que no se envíe al backend
-        const { password, ...userToUpdate } = editingUser;
-        if (!password) delete userToUpdate.password; // ✅ Eliminar campo si está vacío
-
-        await updateUser(userToUpdate);
-        setShowEditModal(false);
-        setEditingUser(null);
-        fetchUsers();
-        showMessage("✅ Usuario actualizado correctamente");
-    } catch (error) {
-        console.error("❌ Error al actualizar usuario:", error);
-    }
-};
-
+    };
 
     const handleDeleteUser = (user) => {
         setDeletingUser(user);
@@ -208,7 +209,7 @@ const handleUpdateUser = async () => {
             )}
 
              {/* Modal para Editar Usuario */}
-            {showEditModal && editingUser && (
+             {showEditModal && editingUser && (
                 <div className="modal fade show d-block" tabIndex="-1">
                     <div className="modal-dialog">
                         <div className="modal-content">
@@ -237,6 +238,13 @@ const handleUpdateUser = async () => {
                                     placeholder="Correo"
                                     value={editingUser.email}
                                     onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
+                                />
+                                <input
+                                    type="password"
+                                    className="form-control mb-2"
+                                    placeholder="Nueva Contraseña (Opcional)"
+                                    value={editingUser.password}
+                                    onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })}
                                 />
                                 <input
                                     type="text"

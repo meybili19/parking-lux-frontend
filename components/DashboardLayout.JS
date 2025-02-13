@@ -16,17 +16,17 @@ export default function DashboardLayout({ children, selectedSection, setSelected
                     <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav ms-auto text-center">
                             {[
-                                { id: "parkings", label: "🅿️ Register Parking Lot" },
+                                { id: "reservations", label: "📅 Register Reservation" },
+                                { id: "access", label: "🔑 Access Control" },
                                 { id: "users", label: "🕵️ Register User" },
                                 { id: "cars", label: "🚗 Register Vehicle" },
-                                { id: "access", label: "🔑 Access Control" },
-                                { id: "reservations", label: "📅 Register Reservation" },
+                                { id: "parkings", label: "🅿️ Register Parking Lot" },
                             ].map((item) => (
                                 <li className="nav-item" key={item.id}>
                                     <a
                                         className={`nav-link fw-semibold nav-item-effect ${selectedSection === item.id ? "active-link" : "text-light"}`}
                                         style={{ cursor: "pointer", transition: "0.3s" }}
-                                        onClick={() => setSelectedSection(item.id)} // ✅ Actualiza la sección seleccionada
+                                        onClick={() => setSelectedSection(item.id)} 
                                     >
                                         {item.label}
                                     </a>

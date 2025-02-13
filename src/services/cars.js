@@ -59,7 +59,13 @@ export const getAllCars = async () => {
     try {
         const response = await axios.get(GET_ALL_CARS_API);
         console.log("✅ All cars:", response.data);
-        return response.data;
+        return response.data.map(car => ({
+            ...car,
+            user: {
+                identification: car.userIdentification,
+                name: car.userName
+            }
+        }));
     } catch (error) {
         console.error("❌ Error in getAllCars:", error.response?.data || error.message);
         throw error;
