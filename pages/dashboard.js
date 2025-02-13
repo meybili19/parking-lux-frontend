@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import "bootstrap/dist/css/bootstrap.min.css";
 import UsersPage from "./users"; // Importamos la página de usuarios
+import ParkingLotPage from "./parkinglot"; // Importamos la página de parqueaderos
+import CarsPage from "./cars"; // Importamos la página de carros
 import { FaHome } from "react-icons/fa"; // Importamos un icono de FontAwesome
 
 export default function DashboardPage() {
     const [selectedSection, setSelectedSection] = useState(null);
 
     useEffect(() => {
-        // Cargar Bootstrap JS manualmente
         if (typeof window !== "undefined") {
             require("bootstrap/dist/js/bootstrap.bundle.min.js");
         }
@@ -19,32 +20,40 @@ export default function DashboardPage() {
             {/* Navbar */}
             <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
                 <div className="container">
-                    <a
+                    <span
                         className="navbar-brand fw-bold"
                         style={{ cursor: "pointer" }}
                         onClick={() => setSelectedSection(null)}
                     >
                         PARKING LUX
-                    </a>
+                    </span>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
                     </button>
                     <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav ms-auto text-center">
-                            <li className="nav-item"><a className="nav-link" href="#">Registrar Parqueadero</a></li>
                             <li className="nav-item">
-                                <a className="nav-link" style={{ cursor: "pointer" }} onClick={() => setSelectedSection("users")}>
+                                <span className="nav-link" style={{ cursor: "pointer" }} onClick={() => setSelectedSection("parkinglot")}>
+                                    Registrar Parqueadero
+                                </span>
+                            </li>
+                            <li className="nav-item">
+                                <span className="nav-link" style={{ cursor: "pointer" }} onClick={() => setSelectedSection("users")}>
                                     Registrar Usuario
+                                </span>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link" style={{ cursor: "pointer" }} onClick={() => setSelectedSection("cars")}>
+                                    Registrar Vehículo
                                 </a>
                             </li>
-                            <li className="nav-item"><a className="nav-link" href="#">Registrar Vehículo</a></li>
                             <li className="nav-item"><a className="nav-link" href="#">Registrar Reserva</a></li>
                             <li className="nav-item"><a className="nav-link" href="#">Control de Acceso</a></li>
                         </ul>
 
                         {/* 🔹 Icono para volver a Index.js (página principal) */}
-                        <Link href="/" className="nav-link text-white fs-4 ms-3" title="Ir a inicio">
+                        <Link href="/" title="Ir a inicio" className="text-white fs-4 ms-3">
                             <FaHome />
                         </Link>
                     </div>
@@ -55,7 +64,12 @@ export default function DashboardPage() {
             <div className="container text-center py-5">
                 {selectedSection === "users" ? (
                     <UsersPage />
-                ) : (
+                ) : selectedSection === "parkinglot" ? (
+                    <ParkingLotPage />
+                ) : selectedSection === "cars" ? (
+                    <CarsPage />
+                )
+                 : (
                     <>
                         <h2 className="fw-bold">📌 Panel de Control - Gestión de Parqueadero</h2>
                         <p>Seleccione una de las opciones del menú para continuar.</p>
