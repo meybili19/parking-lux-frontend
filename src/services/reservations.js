@@ -1,4 +1,5 @@
 import axios from "axios";
+import dayjs from "dayjs";
 
 // 📌 URLs de los microservicios de reservas
 const CREATE_RESERVATION_API = "http://54.146.206.135:4000/reservations";
@@ -38,45 +39,32 @@ export const getAllReservations = async () => {
 
         // 🔄 Obtener datos de vehículos y parqueaderos para cada reserva
         const promises = reservations.map(async (reservation) => {
-            try {
-                let vehicleData = null;
-                let parkingLotData = null;
+            let vehicleData = null;
+            let parkingLotData = null;
 
-                if (reservation.vehicleId) {
-                    try {
-                        const vehicleResponse = await axios.get(`${VEHICLE_API}/${reservation.vehicleId}`);
-                        vehicleData = vehicleResponse.data;
-                    } catch (error) {
-                        if (error.response?.status === 404) {
-                            console.warn(`⚠️ Vehículo con ID ${reservation.vehicleId} no encontrado.`);
-                        } else {
-                            console.error(`❌ Error obteniendo vehículo ID ${reservation.vehicleId}:`, error);
-                        }
-                    }
+            if (reservation.vehicleId) {
+                try {
+                    const vehicleResponse = await axios.get(`${VEHICLE_API}/${reservation.vehicleId}`);
+                    vehicleData = vehicleResponse.data;
+                } catch (error) {
+                    console.warn(`⚠️ No se pudo obtener información del vehículo ${reservation.vehicleId}.`);
                 }
-
-                if (reservation.parkingLotId) {
-                    try {
-                        const parkingResponse = await axios.get(`${PARKING_LOT_API}/${reservation.parkingLotId}`);
-                        parkingLotData = parkingResponse.data;
-                    } catch (error) {
-                        if (error.response?.status === 404) {
-                            console.warn(`⚠️ Parqueadero con ID ${reservation.parkingLotId} no encontrado.`);
-                        } else {
-                            console.error(`❌ Error obteniendo parqueadero ID ${reservation.parkingLotId}:`, error);
-                        }
-                    }
-                }
-
-                return {
-                    ...reservation,
-                    vehicle: vehicleData, // 🚗 Datos del vehículo (si existen)
-                    parkingLot: parkingLotData // 🏢 Datos del parqueadero (si existen)
-                };
-            } catch (error) {
-                console.error(`❌ Error obteniendo datos adicionales para reserva ${reservation.id}:`, error);
-                return { ...reservation, vehicle: null, parkingLot: null };
             }
+
+            if (reservation.parkingLotId) {
+                try {
+                    const parkingResponse = await axios.get(`${PARKING_LOT_API}/${reservation.parkingLotId}`);
+                    parkingLotData = parkingResponse.data;
+                } catch (error) {
+                    console.warn(`⚠️ No se pudo obtener información del parqueadero ${reservation.parkingLotId}.`);
+                }
+            }
+
+            return {
+                ...reservation,
+                vehicle: vehicleData, // 🚗 Datos del vehículo
+                parkingLot: parkingLotData // 🏢 Datos del parqueadero
+            };
         });
 
         reservations = await Promise.all(promises);
@@ -84,7 +72,7 @@ export const getAllReservations = async () => {
         return reservations;
     } catch (error) {
         console.error("❌ Error obteniendo reservas desde GraphQL:", error.response?.data || error.message);
-        throw error;
+        return []; // Evita que el frontend se rompa
     }
 };
 
@@ -94,47 +82,73 @@ export const getAllReservations = async () => {
 export const createReservation = async (reservationData) => {
     try {
         console.log("📡 Enviando nueva reserva:", reservationData);
-        const response = await axios.post(CREATE_RESERVATION_API, {
-            car_id: reservationData.vehicleId,
-            parking_lot_id: reservationData.parkingLotId,
-            start_date: reservationData.startDate,
-            end_date: reservationData.endDate
-        }, {
+
+        // 🔹 Formatear fechas en el formato esperado por el backend
+        const formattedStartDate = dayjs(reservationData.startDate).format("YYYY-MM-DD HH:mm:ss");
+        const formattedEndDate = dayjs(reservationData.endDate).format("YYYY-MM-DD HH:mm:ss");
+
+        const payload = {
+            car_id: parseInt(reservationData.vehicleId),  // Convertimos a número
+            parking_lot_id: parseInt(reservationData.parkingLotId),
+            start_date: formattedStartDate,
+            end_date: formattedEndDate,
+        };
+
+        console.log("📡 Datos enviados al backend:", payload);
+
+        const response = await axios.post(CREATE_RESERVATION_API, payload, {
             headers: { "Content-Type": "application/json" },
         });
 
-        console.log("✅ Reserva creada:", response.data);
+        console.log("✅ Reserva creada exitosamente:", response.data);
         return response.data;
     } catch (error) {
-        console.error("❌ Error creando reserva:", error.response?.data || error.message);
-        throw error;
+        console.error("❌ Error creando reserva:", error);
+
+        if (error.response) {
+            console.error("❌ Respuesta del servidor:", error.response.data);
+            throw new Error(`❌ Error del servidor: ${error.response.data.message || "Error desconocido"}`);
+        } else if (error.request) {
+            console.error("❌ No hubo respuesta del servidor.");
+            throw new Error("❌ No se pudo conectar al servidor. Verifica la URL o si el servicio está corriendo.");
+        } else {
+            console.error("❌ Error en la configuración de la solicitud.");
+            throw new Error("❌ Error inesperado al procesar la reserva.");
+        }
     }
 };
-
 //
 // 🔄 Editar una reserva (PUT)
 //
 export const updateReservation = async (id, reservationData) => {
     try {
-        console.log("📡 Actualizando reserva ID:", id);
-        const response = await axios.put(UPDATE_RESERVATION_API, {
+        console.log("📡 Enviando actualización para reserva ID:", id);
+
+        // 🔹 Formatear fechas en el formato esperado por el backend
+        const formattedStartDate = dayjs(reservationData.startDate).format("YYYY-MM-DDTHH:mm:ss[Z]");
+        const formattedEndDate = dayjs(reservationData.endDate).format("YYYY-MM-DDTHH:mm:ss[Z]");
+
+        const payload = {
             id: id,
-            car_id: reservationData.vehicleId,
-            parking_lot_id: reservationData.parkingLotId,
-            start_date: reservationData.startDate,
-            end_date: reservationData.endDate
-        }, {
-            headers: { "Content-Type": "application/json" },
+            car_id: reservationData.vehicleId ?? reservationData.car_id,
+            parking_lot_id: reservationData.parkingLotId ?? reservationData.parking_lot_id,
+            start_date: formattedStartDate,
+            end_date: formattedEndDate
+        };
+
+        console.log("📡 Datos enviados en `PUT`:", payload);
+
+        const response = await axios.put(UPDATE_RESERVATION_API, payload, {
+            headers: { "Content-Type": "application/json" }
         });
 
-        console.log("✅ Reserva actualizada:", response.data);
+        console.log("✅ Reserva actualizada correctamente:", response.data);
         return response.data;
     } catch (error) {
-        console.error("❌ Error actualizando reserva:", error.response?.data || error.message);
+        console.error("❌ Error en `updateReservation`:", error.response?.data || error.message);
         throw error;
     }
 };
-
 //
 // 🗑️ Eliminar una reserva (DELETE)
 //

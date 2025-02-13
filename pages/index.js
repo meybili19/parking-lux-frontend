@@ -1,37 +1,9 @@
 import Link from "next/link";
-import "bootstrap/dist/css/bootstrap.min.css";
+import Layout from "../components/Layout";
 
 export default function HomePage() {
     return (
-        <div className="container-fluid p-0">
-            {/* Navbar */}
-            <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
-                <div className="container">
-                    <Link href="/" className="navbar-brand fw-bold text-primary">
-                        🚗 PARKING LUX
-                    </Link>
-                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-                    <div className="collapse navbar-collapse" id="navbarNav">
-                        <ul className="navbar-nav ms-auto">
-                            <li className="nav-item">
-                                <Link href="/" className="nav-link text-dark fw-semibold">🏠 Home</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link href="/services" className="nav-link text-dark fw-semibold">🛠 Services</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link href="/dashboard" className="nav-link text-dark fw-semibold">📅 Reservations</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link href="/contact" className="nav-link text-dark fw-semibold">📞 Contact</Link>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-
+        <Layout>
             {/* Hero Section */}
             <div className="container-fluid text-center text-white py-5" style={{
                 background: "linear-gradient(135deg, #00AEEF, #005F9E)",
@@ -64,11 +36,6 @@ export default function HomePage() {
                     ))}
                 </div>
             </div>
-
-            {/* Footer */}
-            <footer className="bg-dark text-white text-center py-3">
-                <p className="mb-0">© 2025 PARKING LUX. All rights reserved.</p>
-            </footer>
-        </div>
+        </Layout>
     );
 }

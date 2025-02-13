@@ -1,28 +1,21 @@
-import "bootstrap/dist/css/bootstrap.min.css";
+import Layout from "../components/Layout";
 
 export default function ContactPage() {
     return (
-        <div className="container-fluid d-flex flex-column min-vh-100 p-0">
-            {/* Navbar */}
-            <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
-                <div className="container">
-                    <a className="navbar-brand fw-bold text-primary" href="/">🚗 PARKING LUX</a>
-                </div>
-            </nav>
-
-            {/* Contact Section */}
-            <div className="container-fluid text-center my-5 flex-grow-1 bg-light py-5 rounded shadow-lg">
+        <Layout>
+            <div className="container text-center mt-5">
                 <h2 className="fw-bold text-primary">📞 Contact Us</h2>
                 <p className="lead">Get in touch with our support team for any inquiries.</p>
 
                 <div className="row mt-4 justify-content-center">
                     {[
-                        { icon: "📍", title: "Address", desc: "123 Parking Street, New York, USA" },
+                        { icon: "📍", title: "Address", desc: "Quito - Ecuador" },
                         { icon: "📧", title: "Email", desc: "support@parkinglux.com" },
-                        { icon: "📞", title: "Phone", desc: "+1 234 567 890" },
+                        { icon: "📞", title: "Phone", desc: "+593 99 156 3372 / +593 99 610 9719  / +593 99 839 8800" },
                     ].map((contact, index) => (
-                        <div className="col-md-4" key={index}>
-                            <div className="p-4 shadow-lg rounded contact-card bg-white">
+                        <div className="col-lg-4 col-md-6 d-flex justify-content-center" key={index}>
+                            <div className="p-4 shadow-lg rounded contact-card bg-white w-100 d-flex flex-column justify-content-center"
+                                style={{ minHeight: "150px", maxWidth: "400px" }}>
                                 <h3 className="text-primary">{contact.icon} {contact.title}</h3>
                                 <p>{contact.desc}</p>
                             </div>
@@ -31,21 +24,20 @@ export default function ContactPage() {
                 </div>
             </div>
 
-            {/* Footer */}
-            <footer className="bg-dark text-white text-center py-3 mt-auto">
-                <p className="mb-0">© 2025 PARKING LUX. All rights reserved.</p>
-            </footer>
 
-            {/* Hover Effects */}
+            <div className="py-5"></div>
+
+    
             <style jsx>{`
                 .contact-card {
                     transition: transform 0.3s ease-in-out, box-shadow 0.3s;
+                    text-align: center;
                 }
                 .contact-card:hover {
                     transform: translateY(-5px);
                     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
                 }
             `}</style>
-        </div>
+        </Layout>
     );
 }
