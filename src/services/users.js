@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const READ_API = "http://52.3.1.74:5002/all/users";
+const GET_USER_API = "http://52.3.1.74:5002/users";
 const CREATE_API = "http://98.85.44.62:5000/users";
 const UPDATE_API = "http://44.212.131.29:5001/users";
 const DELETE_API = "http://34.196.106.116:5003/users";
@@ -14,6 +15,17 @@ export const getUsers = async () => {
         return data; // ✅ La API ya devuelve un array de Users
     } catch (error) {
         console.error("❌ Error obteniendo Users:", error);
+        throw error;
+    }
+};
+// 🔹 Obtener usuario por ID
+export const getUserById = async (id) => {
+    try {
+        const response = await axios.get(`${GET_USER_API}/${id}`);
+        console.log("✅ Usuario encontrado:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("❌ Error al obtener usuario por ID:", error);
         throw error;
     }
 };
@@ -39,18 +51,26 @@ export const createUser = async (userData) => {
 };
 
 
-
-// 🔹 Actualizar User
-export const updateUser = async (UserData) => {
+// 🔹 Actualizar usuario con validaciones del backend
+export const updateUser = async (userData) => {
     try {
-        console.log("🔍 Actualizando User con ID:", UserData.id);
-        const response = await axios.put(`${UPDATE_API}/${UserData.id}`, UserData);
+        console.log("🔍 Actualizando usuario con ID:", userData.id);
+
+        // 🔹 Eliminar "password" si está vacío o indefinido antes de enviarlo
+        if (!userData.password) delete userData.password;
+
+        const response = await axios.put(`${UPDATE_API}/${userData.id}`, userData, {
+            headers: { "Content-Type": "application/json" },
+        });
+
+        console.log("✅ Usuario actualizado:", response.data);
         return response.data;
     } catch (error) {
-        console.error("❌ Error al actualizar User:", error);
+        console.error("❌ Error al actualizar usuario:", error.response?.data || error.message);
         throw error;
     }
 };
+
 
 
 // 🔹 Eliminar User

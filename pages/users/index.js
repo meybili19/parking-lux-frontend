@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getUsers, createUser, updateUser, deleteUser } from "../../src/services/users";
+import { getUsers, getUserById,createUser, updateUser, deleteUser } from "../../src/services/users";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function UsersPage() {
@@ -61,25 +61,39 @@ export default function UsersPage() {
         }
     };
 
-    // 📌 Editar usuario (mostrar modal)
-    const handleEditUser = (user) => {
-        setEditingUser({ ...user, password: "" });
-        setShowEditModal(true);
-    };
-
-    // 📌 Actualizar usuario y recargar la tabla
-    const handleUpdateUser = async () => {
+    // 📌 Obtener usuario antes de editar
+    const handleEditUser = async (user) => {
         try {
-            if (!editingUser.id) return console.error("❌ No hay ID de usuario para actualizar.");
-            await updateUser(editingUser);
-            setShowEditModal(false);
-            setEditingUser(null);
-            fetchUsers(); // ✅ Recargar lista de usuarios
-            showMessage("✅ Usuario actualizado correctamente"); // ✅ Mostrar mensaje
+            const userData = await getUserById(user.id); // ✅ Obtener usuario desde la API
+            setEditingUser({ ...userData, password: "" }); // 🔹 La contraseña no se muestra
+            setShowEditModal(true);
         } catch (error) {
-            console.error("❌ Error al actualizar User:", error);
+            console.error("❌ Error al obtener datos del usuario:", error);
         }
     };
+
+    // 📌 Actualizar usuario
+const handleUpdateUser = async () => {
+    try {
+        if (!editingUser.id) {
+            console.error("❌ No hay ID de usuario para actualizar.");
+            return;
+        }
+
+        // 🔹 Eliminamos el campo "password" si está vacío para que no se envíe al backend
+        const { password, ...userToUpdate } = editingUser;
+        if (!password) delete userToUpdate.password; // ✅ Eliminar campo si está vacío
+
+        await updateUser(userToUpdate);
+        setShowEditModal(false);
+        setEditingUser(null);
+        fetchUsers();
+        showMessage("✅ Usuario actualizado correctamente");
+    } catch (error) {
+        console.error("❌ Error al actualizar usuario:", error);
+    }
+};
+
 
     const handleDeleteUser = (user) => {
         setDeletingUser(user);
@@ -193,7 +207,7 @@ export default function UsersPage() {
                 </div>
             )}
 
-            {/* Modal para Editar Usuario */}
+             {/* Modal para Editar Usuario */}
             {showEditModal && editingUser && (
                 <div className="modal fade show d-block" tabIndex="-1">
                     <div className="modal-dialog">
@@ -203,12 +217,42 @@ export default function UsersPage() {
                                 <button className="btn-close" onClick={() => setShowEditModal(false)}></button>
                             </div>
                             <div className="modal-body">
-                                <input type="text" className="form-control mb-2" placeholder="Nombre" value={editingUser.name} onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })} />
-                                <input type="email" className="form-control mb-2" placeholder="Correo" value={editingUser.email} onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })} />
+                                <input
+                                    type="text"
+                                    className="form-control mb-2"
+                                    placeholder="Identificación"
+                                    value={editingUser.identification}
+                                    onChange={(e) => setEditingUser({ ...editingUser, identification: e.target.value })}
+                                />
+                                <input
+                                    type="text"
+                                    className="form-control mb-2"
+                                    placeholder="Nombre"
+                                    value={editingUser.name}
+                                    onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
+                                />
+                                <input
+                                    type="email"
+                                    className="form-control mb-2"
+                                    placeholder="Correo"
+                                    value={editingUser.email}
+                                    onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
+                                />
+                                <input
+                                    type="text"
+                                    className="form-control mb-2"
+                                    placeholder="Tipo"
+                                    value={editingUser.type}
+                                    onChange={(e) => setEditingUser({ ...editingUser, type: e.target.value })}
+                                />
                             </div>
                             <div className="modal-footer">
-                                <button className="btn btn-secondary" onClick={() => setShowEditModal(false)}>Cancelar</button>
-                                <button className="btn btn-primary" onClick={handleUpdateUser}>Actualizar</button>
+                                <button className="btn btn-secondary" onClick={() => setShowEditModal(false)}>
+                                    Cancelar
+                                </button>
+                                <button className="btn btn-primary" onClick={handleUpdateUser}>
+                                    Actualizar
+                                </button>
                             </div>
                         </div>
                     </div>
