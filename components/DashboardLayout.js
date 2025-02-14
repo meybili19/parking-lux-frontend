@@ -16,7 +16,7 @@ export default function DashboardLayout({ children, selectedSection, setSelected
     };
 
     useEffect(() => {
-        if (typeof window !== "undefined" && typeof document !== "undefined") {
+        if (typeof window !== "undefined") {
             require("bootstrap/dist/js/bootstrap.bundle.min.js");
         }
     }, []);

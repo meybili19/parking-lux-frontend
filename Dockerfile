@@ -7,18 +7,20 @@ WORKDIR /app
 # Copiar archivos esenciales para instalar dependencias
 COPY package.json package-lock.json ./
 
-# Instalar TODAS las dependencias (incluyendo devDependencies para el build)
+# Instalar TODAS las dependencias
 RUN npm install
 
 # Copiar solo los archivos necesarios
 COPY ./components ./components
 COPY ./pages ./pages
 COPY ./public ./public
-COPY ./src/styles ./styles
 COPY ./src ./src
 
 # Omitir ESLint en producción (evita errores)
 ENV NEXT_DISABLE_ESLINT=1
+
+# Asegurar que Node.js reconozca Next.js correctamente
+ENV NODE_OPTIONS="--max_old_space_size=512"
 
 # Construir la aplicación Next.js
 RUN npm run build

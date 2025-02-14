@@ -1,8 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
 import dayjs from "dayjs";
+import dynamic from "next/dynamic";
 import { getAllReservations, createReservation, updateReservation, deleteReservation } from "../../src/services/reservations";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+// Cargar Bootstrap dinámicamente solo en el cliente para evitar errores SSR
 const BootstrapModal = dynamic(() => import("bootstrap/dist/js/bootstrap.bundle.min.js"), { ssr: false });
 
 export default function ReservationsPage() {
@@ -10,14 +12,15 @@ export default function ReservationsPage() {
     const [search, setSearch] = useState("");
     const [message, setMessage] = useState("");
     const [isLoading, setIsLoading] = useState(true);
-    // 🔹 Efecto para cargar Bootstrap en el cliente
+
+    // 🔹 Cargar Bootstrap solo en el cliente
     useEffect(() => {
         if (typeof window !== "undefined") {
-            require("bootstrap/dist/js/bootstrap.bundle.min.js");
+            import("bootstrap/dist/js/bootstrap.bundle.min.js");
         }
     }, []);
 
-    // 🔹 Efecto para limpiar mensajes después de 3 segundos
+    // 🔹 Limpiar mensajes de alerta después de 3 segundos
     useEffect(() => {
         if (message) {
             const timer = setTimeout(() => {
@@ -46,7 +49,6 @@ export default function ReservationsPage() {
         setIsLoading(true);
         try {
             const response = await getAllReservations();
-            console.log("📌 Reservas obtenidas:", response);
             setReservations(response);
         } catch (error) {
             console.error("❌ Error al cargar reservas:", error);
@@ -55,6 +57,7 @@ export default function ReservationsPage() {
         }
     }, []);
 
+    // 🔹 Agregar nueva reserva
     const handleSaveReservation = async () => {
         if (!newReservation.vehicleId || !newReservation.parkingLotId || !newReservation.startDate || !newReservation.endDate) {
             setMessage("❌ Todos los campos son obligatorios.");
@@ -62,7 +65,6 @@ export default function ReservationsPage() {
         }
 
         try {
-            // 🔹 Formatear fechas exactamente como el backend espera
             const formattedStartDate = dayjs(newReservation.startDate).format("YYYY-MM-DD HH:mm:ss");
             const formattedEndDate = dayjs(newReservation.endDate).format("YYYY-MM-DD HH:mm:ss");
 
@@ -73,25 +75,23 @@ export default function ReservationsPage() {
                 endDate: formattedEndDate,
             };
 
-            console.log("📡 Enviando nueva reserva:", reservationData);
             await createReservation(reservationData);
 
             setShowModal(false);
             setNewReservation({ vehicleId: "", parkingLotId: "", startDate: "", endDate: "" });
             setMessage("✅ Reserva agregada con éxito.");
-            fetchReservations(); // 🔄 Refrescar la lista después de agregar
+            fetchReservations();
         } catch (error) {
-            console.error("❌ Error agregando reserva:", error);
             setMessage(error.message || "❌ Error al agregar la reserva.");
         }
     };
 
+    // 🔹 Editar reserva
     const handleEditReservation = (reservation) => {
         setEditingReservation({ ...reservation });
         setShowEditModal(true);
     };
 
-    // 📌 Modal de edición
     const handleUpdateReservation = async () => {
         if (!editingReservation?.id) return;
 
@@ -108,41 +108,29 @@ export default function ReservationsPage() {
             setMessage("✅ Reserva actualizada con éxito.");
             fetchReservations();
         } catch (error) {
-            console.error("❌ Error al actualizar la reserva:", error);
+            setMessage("❌ Error al actualizar la reserva.");
         }
     };
 
+    // 🔹 Eliminar reserva
     const handleDeleteReservation = (reservation) => {
-        console.log("🟢 Reserva seleccionada para eliminar:", reservation);
         setDeletingReservation(reservation);
         setShowDeleteModal(true);
     };
 
     const confirmDeleteReservation = async () => {
-        console.log("🟢 Eliminando reserva con datos:", deletingReservation);
-
-        if (!deletingReservation || !deletingReservation.id) {
-            console.error("❌ Error: No hay una reserva válida para eliminar.");
-            return;
-        }
+        if (!deletingReservation || !deletingReservation.id) return;
 
         try {
             await deleteReservation(deletingReservation.id);
             setShowDeleteModal(false);
             setDeletingReservation(null);
-            setMessage(`✅ Reserva ID ${deletingReservation.id} eliminada con éxito.`);
-            fetchReservations(); // 🔄 Refrescar la lista después de eliminar
+            setMessage(`✅ Reserva eliminada con éxito.`);
+            fetchReservations();
         } catch (error) {
-            console.error("❌ Error al eliminar la reserva:", error);
+            setMessage("❌ Error al eliminar la reserva.");
         }
     };
-
-
-    const filteredReservations = reservations.filter(reservation =>
-        reservation.vehicle?.licensePlate?.toLowerCase().includes(search.toLowerCase()) ||
-        reservation.parkingLot?.name?.toLowerCase().includes(search.toLowerCase()) ||
-        reservation.startDate?.toLowerCase().includes(search.toLowerCase())
-    );
 
     return (
         <div className="container mt-5">
@@ -162,7 +150,7 @@ export default function ReservationsPage() {
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
-                       <button className="btn btn-success" onClick={() => setShowModal(true)}>➕ Add Reservation</button>
+                        <button className="btn btn-success" onClick={() => setShowModal(true)}>➕ Add Reservation</button>
                     </div>
 
                     <div className="table-responsive">
@@ -180,39 +168,23 @@ export default function ReservationsPage() {
                                         <th>Parking Lot</th>
                                         <th>Start Date</th>
                                         <th>End Date</th>
-                                        <th>Total Amount ($)</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredReservations.length > 0 ? (
-                                        filteredReservations.map(reservation => (
-                                            <tr key={reservation.id} className="table-light">
-                                                <td>{reservation.id}</td>
-                                                <td>
-                                                    {reservation.vehicle ?
-                                                        `${reservation.vehicle.brand} ${reservation.vehicle.model} (${reservation.vehicle.licensePlate})`
-                                                        : "No Data"}
-                                                </td>
-                                                <td>
-                                                    {reservation.parkingLot ?
-                                                        `${reservation.parkingLot.name} - ${reservation.parkingLot.address}`
-                                                        : "No Data"}
-                                                </td>
-                                                <td>{reservation.startDate ? dayjs(reservation.startDate).format("YYYY-MM-DD HH:mm") : "N/A"}</td>
-                                                <td>{reservation.endDate ? dayjs(reservation.endDate).format("YYYY-MM-DD HH:mm") : "N/A"}</td>
-                                                <td>${reservation.totalAmount ? reservation.totalAmount.toFixed(2) : "N/A"}</td>
-                                                <td>
-                                                    <button className="btn btn-primary btn-sm mx-1" onClick={() => handleEditReservation(reservation)}>✏️ Edit</button>
-                                                    <button className="btn btn-danger btn-sm mx-1" onClick={() => handleDeleteReservation(reservation)}>🗑️ Delete</button>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td colSpan="6" className="text-center text-muted">No reservations found</td>
+                                    {reservations.map(reservation => (
+                                        <tr key={reservation.id}>
+                                            <td>{reservation.id}</td>
+                                            <td>{reservation.vehicle?.licensePlate || "No Data"}</td>
+                                            <td>{reservation.parkingLot?.name || "No Data"}</td>
+                                            <td>{dayjs(reservation.startDate).format("YYYY-MM-DD HH:mm")}</td>
+                                            <td>{dayjs(reservation.endDate).format("YYYY-MM-DD HH:mm")}</td>
+                                            <td>
+                                                <button className="btn btn-primary btn-sm mx-1" onClick={() => handleEditReservation(reservation)}>✏️ Edit</button>
+                                                <button className="btn btn-danger btn-sm mx-1" onClick={() => handleDeleteReservation(reservation)}>🗑️ Delete</button>
+                                            </td>
                                         </tr>
-                                    )}
+                                    ))}
                                 </tbody>
                             </table>
                         )}
