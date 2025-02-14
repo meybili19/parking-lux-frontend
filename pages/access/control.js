@@ -13,8 +13,7 @@ const EntryControl = () => {
       const timer = setTimeout(() => {
         setErrorMessage("");
         setSuccessMessage("");
-      }, 10000); // Borra los mensajes después de 10 segundos
-
+      }, 10000);
       return () => clearTimeout(timer);
     }
   }, [errorMessage, successMessage]);
@@ -29,7 +28,7 @@ const EntryControl = () => {
       setErrorMessage("");
       const reservation = await getReservationById(reservationId);
       setReservationDetails(reservation);
-      setSuccessMessage(""); // Reset success message
+      setSuccessMessage("");
     } catch (error) {
       setReservationDetails(null);
       setErrorMessage("❌ Reservation not found.");
@@ -57,28 +56,28 @@ const EntryControl = () => {
   };
 
   return (
-    <div className="card p-4 shadow-sm">
-      <h4 className="text-primary">🚗 Entry Control</h4>
+    <div className="card p-4 shadow-lg rounded border-0">
+      <h4 className="text-primary text-center mb-4">🚗 Entry Control</h4>
       <input
         type="number"
-        className="form-control mb-3"
+        className="form-control mb-3 input-custom"
         placeholder="Enter Reservation ID"
         value={reservationId}
         onChange={(e) => setReservationId(e.target.value)}
       />
-      <button className="btn btn-info mb-3" onClick={fetchReservationDetails}>
+      <button className="btn btn-info w-100 mb-3 fw-bold" onClick={fetchReservationDetails}>
         🔍 Check Reservation
       </button>
-      {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
-      {successMessage && <div className="alert alert-success">{successMessage}</div>}
+      {errorMessage && <div className="alert alert-danger text-center">{errorMessage}</div>}
+      {successMessage && <div className="alert alert-success text-center">{successMessage}</div>}
       {reservationDetails && (
-        <div className="alert alert-success">
+        <div className="alert alert-success text-center">
           <h5>✅ Reservation Found</h5>
           <p><strong>User:</strong> {reservationDetails.user.name} ({reservationDetails.user.email})</p>
           <p><strong>Vehicle:</strong> {reservationDetails.vehicle.brand} - {reservationDetails.vehicle.licensePlate}</p>
         </div>
       )}
-      <button className="btn btn-success" onClick={handleEntry} disabled={!reservationDetails}>
+      <button className="btn btn-success w-100 fw-bold" onClick={handleEntry} disabled={!reservationDetails}>
         ✅ Register Entry
       </button>
     </div>
@@ -96,8 +95,7 @@ const ExitControl = () => {
       const timer = setTimeout(() => {
         setErrorMessage("");
         setSuccessMessage("");
-      }, 10000); // Borra los mensajes después de 10 segundos
-
+      }, 10000);
       return () => clearTimeout(timer);
     }
   }, [errorMessage, successMessage]);
@@ -117,7 +115,7 @@ const ExitControl = () => {
       setSuccessMessage(`✅ Vehicle with ID ${vehicleId} has successfully exited the parking lot.`);
       setExitDetails(response);
       setErrorMessage("");
-      setVehicleId(""); // Reset input after success
+      setVehicleId("");
     } catch (error) {
       console.error("❌ Error registering exit:", error);
 
@@ -130,25 +128,22 @@ const ExitControl = () => {
   };
 
   return (
-    <div className="card p-4 shadow-sm">
-      <h4 className="text-danger">🚗 Exit Control</h4>
+    <div className="card p-4 shadow-lg rounded border-0">
+      <h4 className="text-danger text-center mb-4">🚗 Exit Control</h4>
       <input
         type="number"
-        className="form-control mb-3"
+        className="form-control mb-3 input-custom"
         placeholder="Enter Vehicle ID"
         value={vehicleId}
         onChange={(e) => setVehicleId(e.target.value)}
       />
-      <button className="btn btn-danger mb-3" onClick={handleExit}>
+      <button className="btn btn-danger w-100 mb-3 fw-bold" onClick={handleExit}>
         🚗 Register Exit
       </button>
-
-      {/* Mensajes de error y éxito en formato Bootstrap */}
-      {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
-      {successMessage && <div className="alert alert-success">{successMessage}</div>}
-
+      {errorMessage && <div className="alert alert-danger text-center">{errorMessage}</div>}
+      {successMessage && <div className="alert alert-success text-center">{successMessage}</div>}
       {exitDetails && (
-        <div className="alert alert-success">
+        <div className="alert alert-success text-center">
           <h5>✅ Exit Registered</h5>
           <p><strong>Vehicle ID:</strong> {exitDetails.vehicleId}</p>
           <p><strong>Exit Time:</strong> {exitDetails.exitTime}</p>
@@ -158,19 +153,24 @@ const ExitControl = () => {
   );
 };
 
-
 export default function ControlPage() {
   return (
-    <div className="container mt-5">
-      <h2 className="fw-bold text-center">🚗 Parking Access Control</h2>
+    <div className="container control-page">
+      <h2 className="fw-bold text-center control-title">🚗 Parking Access Control</h2>
       <div className="row">
         <div className="col-md-6">
-          <EntryControl />
+          <div className="control-card">
+            <EntryControl />
+          </div>
         </div>
         <div className="col-md-6">
-          <ExitControl />
+          <div className="control-card">
+            <ExitControl />
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
+

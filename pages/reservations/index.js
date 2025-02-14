@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import dayjs from "dayjs";
 import { getAllReservations, createReservation, updateReservation, deleteReservation } from "../../src/services/reservations";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -7,6 +7,7 @@ export default function ReservationsPage() {
     const [reservations, setReservations] = useState([]);
     const [search, setSearch] = useState("");
     const [message, setMessage] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
     useEffect(() => {
         if (message) {
             const timer = setTimeout(() => {
@@ -31,15 +32,18 @@ export default function ReservationsPage() {
         fetchReservations();
     }, []);
 
-    const fetchReservations = async () => {
+    const fetchReservations = useCallback(async () => {
+        setIsLoading(true);
         try {
             const response = await getAllReservations();
-            console.log("📌 Reservas obtenidas en el frontend:", response);
+            console.log("📌 Reservas obtenidas:", response);
             setReservations(response);
         } catch (error) {
-            console.error("❌ Error cargando reservas:", error);
+            console.error("❌ Error al cargar reservas:", error);
+        } finally {
+            setIsLoading(false);
         }
-    };
+    }, []);
 
     const handleSaveReservation = async () => {
         if (!newReservation.vehicleId || !newReservation.parkingLotId || !newReservation.startDate || !newReservation.endDate) {
@@ -144,57 +148,59 @@ export default function ReservationsPage() {
                         <input
                             type="text"
                             className="form-control w-50"
-                            placeholder="🔍Search reservation..."
+                            placeholder="🔍 Search reservation..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
-                        <button className="btn btn-success" onClick={() => setShowModal(true)}>➕ Add Reservation</button>
+                        <button className="btn btn-success">➕ Add Reservation</button>
                     </div>
 
                     <div className="table-responsive">
-                        <table className="table table-bordered table-hover text-center">
-                            <thead className="table-dark">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Vehicle</th>
-                                    <th>Parking Lot</th>
-                                    <th>Start Date</th>
-                                    <th>End Date</th>
-                                    <th>Total Amount ($)</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredReservations.length > 0 ? (
-                                    filteredReservations.map(reservation => (
-                                        <tr key={reservation.id} className="table-light">
-                                            <td>{reservation.id}</td>
-                                            <td>
-                                                {reservation.vehicle ?
-                                                    `${reservation.vehicle.brand} ${reservation.vehicle.model} (${reservation.vehicle.licensePlate})`
-                                                    : "No Data"}
-                                            </td>
-                                            <td>
-                                                {reservation.parkingLot ?
-                                                    `${reservation.parkingLot.name} - ${reservation.parkingLot.address}`
-                                                    : "No Data"}
-                                            </td>
-                                            <td>{new Date(parseInt(reservation.startDate)).toLocaleString()}</td>
-                                            <td>{new Date(parseInt(reservation.endDate)).toLocaleString()}</td>
-                                            <td>${reservation.totalAmount ? reservation.totalAmount.toFixed(2) : "N/A"}</td>
-                                            <td>
-                                                <button className="btn btn-primary btn-sm mx-1" onClick={() => handleEditReservation(reservation)}>✏️ Edit</button>
-                                                <button className="btn btn-danger btn-sm mx-1" onClick={() => handleDeleteReservation(reservation)}>🗑️ Delete</button>
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
+                        {isLoading ? (
+                            <div className="text-center p-3">
+                                <span className="spinner-border text-primary"></span> <br />
+                                <span>Loading reservations...</span>
+                            </div>
+                        ) : (
+                            <table className="table table-bordered table-hover text-center">
+                                <thead className="table-dark">
                                     <tr>
-                                        <td colSpan="6" className="text-center text-muted">No reservations found</td>
+                                        <th>ID</th>
+                                        <th>Vehicle</th>
+                                        <th>Parking Lot</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Total Amount ($)</th>
                                     </tr>
-                                )}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {filteredReservations.length > 0 ? (
+                                        filteredReservations.map(reservation => (
+                                            <tr key={reservation.id} className="table-light">
+                                                <td>{reservation.id}</td>
+                                                <td>
+                                                    {reservation.vehicle ?
+                                                        `${reservation.vehicle.brand} ${reservation.vehicle.model} (${reservation.vehicle.licensePlate})`
+                                                        : "No Data"}
+                                                </td>
+                                                <td>
+                                                    {reservation.parkingLot ?
+                                                        `${reservation.parkingLot.name} - ${reservation.parkingLot.address}`
+                                                        : "No Data"}
+                                                </td>
+                                                <td>{reservation.startDate ? dayjs(reservation.startDate).format("YYYY-MM-DD HH:mm") : "N/A"}</td>
+                                                <td>{reservation.endDate ? dayjs(reservation.endDate).format("YYYY-MM-DD HH:mm") : "N/A"}</td>
+                                                <td>${reservation.totalAmount ? reservation.totalAmount.toFixed(2) : "N/A"}</td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="6" className="text-center text-muted">No reservations found</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        )}
                     </div>
                 </div>
             </div>

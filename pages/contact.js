@@ -11,7 +11,7 @@ export default function ContactPage() {
                     {[
                         { icon: "📍", title: "Address", desc: "Quito - Ecuador" },
                         { icon: "📧", title: "Email", desc: "support@parkinglux.com" },
-                        { icon: "📞", title: "Phone", desc: "+593 99 156 3372 / +593 99 610 9719  / +593 99 839 8800" },
+                        { icon: "📞", title: "Phone", desc: "+593 99 156 3372 / +593 99 610 9719" },
                     ].map((contact, index) => (
                         <div className="col-lg-4 col-md-6 d-flex justify-content-center" key={index}>
                             <div className="p-4 shadow-lg rounded contact-card bg-white w-100 d-flex flex-column justify-content-center"

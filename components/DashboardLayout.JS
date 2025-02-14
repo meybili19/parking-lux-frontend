@@ -1,19 +1,47 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import Link from "next/link";
+import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
 
 export default function DashboardLayout({ children, selectedSection, setSelectedSection }) {
+    const router = useRouter();
+    const [isNavOpen, setIsNavOpen] = useState(false);
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        router.replace("/");
+    };
+
+    const handleGoToDashboard = () => {
+        router.push("/dashboard");
+    };
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            require("bootstrap/dist/js/bootstrap.bundle.min.js");
+        }
+    }, []);
+
     return (
         <div className="dashboard-container d-flex flex-column min-vh-100">
             {/* Navbar */}
             <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
                 <div className="container">
-                    <Link href="/" legacyBehavior>
-                        <a className="navbar-brand fw-bold logo-effect">🚗 PARKING LUX</a>
-                    </Link>
-                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    {/* Título con acción de ir al Dashboard */}
+                    <a className="navbar-brand fw-bold logo-effect" style={{ cursor: "pointer" }} onClick={handleGoToDashboard}>
+                        🚗 PARKING LUX
+                    </a>
+
+                    {/* Botón hamburguesa para pantallas pequeñas */}
+                    <button
+                        className="navbar-toggler"
+                        type="button"
+                        onClick={() => setIsNavOpen(!isNavOpen)}
+                    >
                         <span className="navbar-toggler-icon"></span>
                     </button>
-                    <div className="collapse navbar-collapse" id="navbarNav">
+
+                    {/* Menú colapsable */}
+                    <div className={`collapse navbar-collapse ${isNavOpen ? "show" : ""}`} id="navbarNav">
                         <ul className="navbar-nav ms-auto text-center">
                             {[
                                 { id: "reservations", label: "📅 Register Reservation" },
@@ -26,13 +54,19 @@ export default function DashboardLayout({ children, selectedSection, setSelected
                                     <a
                                         className={`nav-link fw-semibold nav-item-effect ${selectedSection === item.id ? "active-link" : "text-light"}`}
                                         style={{ cursor: "pointer", transition: "0.3s" }}
-                                        onClick={() => setSelectedSection(item.id)} 
+                                        onClick={() => {
+                                            setSelectedSection(item.id);
+                                            setIsNavOpen(false); // Cierra el menú al hacer clic
+                                        }}
                                     >
                                         {item.label}
                                     </a>
                                 </li>
                             ))}
                         </ul>
+
+                        {/* Botón de Logout */}
+                        <button className="btn btn-danger ms-3" onClick={handleLogout}>🚪 Logout</button>
                     </div>
                 </div>
             </nav>

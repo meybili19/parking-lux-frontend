@@ -35,35 +35,39 @@ export const getAllReservations = async () => {
             headers: { "Content-Type": "application/json" },
         });
 
-        let reservations = response.data.data.getAllReservations;
+        let reservations = response.data.data?.getAllReservations ?? [];
+        if (reservations.length === 0) {
+            console.warn("⚠️ No reservations found in the database.");
+            return [];
+        }
 
         // Fetch vehicle and parking lot details for each reservation
         const promises = reservations.map(async (reservation) => {
             let vehicleData = null;
             let parkingLotData = null;
 
-            if (reservation.vehicleId) {
-                try {
+            try {
+                if (reservation.vehicleId) {
                     const vehicleResponse = await axios.get(`${VEHICLE_API}/${reservation.vehicleId}`);
-                    vehicleData = vehicleResponse.data;
-                } catch (error) {
-                    console.warn(`⚠️ Could not fetch vehicle data for ${reservation.vehicleId}`);
+                    vehicleData = vehicleResponse.data ?? null;
                 }
+            } catch (error) {
+                console.warn(`⚠️ Could not fetch vehicle data for ID: ${reservation.vehicleId}`);
             }
 
-            if (reservation.parkingLotId) {
-                try {
+            try {
+                if (reservation.parkingLotId) {
                     const parkingResponse = await axios.get(`${PARKING_LOT_API}/${reservation.parkingLotId}`);
-                    parkingLotData = parkingResponse.data;
-                } catch (error) {
-                    console.warn(`⚠️ Could not fetch parking lot data for ${reservation.parkingLotId}`);
+                    parkingLotData = parkingResponse.data ?? null;
                 }
+            } catch (error) {
+                console.warn(`⚠️ Could not fetch parking lot data for ID: ${reservation.parkingLotId}`);
             }
 
             return {
                 ...reservation,
-                vehicle: vehicleData, 
-                parkingLot: parkingLotData 
+                vehicle: vehicleData || { brand: "Unknown", model: "Unknown", licensePlate: "N/A" },
+                parkingLot: parkingLotData || { name: "Unknown", address: "N/A" }
             };
         });
 
@@ -75,6 +79,7 @@ export const getAllReservations = async () => {
         return [];
     }
 };
+
 
 export const createReservation = async (reservationData) => {
     try {
