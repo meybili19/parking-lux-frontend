@@ -12,7 +12,7 @@ export default function Layout({ children }) {
 
             {/* Footer */}
             <footer className="bg-dark text-white text-center py-3 mt-auto">
-                <p className="mb-0">© 2025 PARKING LUX -CHANGED. All rights reserved.</p>
+                <p className="mb-0">© 2025 PARKING LUX -PETTER. All rights reserved.</p>
             </footer>
         </div>
     );
