@@ -3,11 +3,21 @@ import dayjs from "dayjs";
 import { getAllReservations, createReservation, updateReservation, deleteReservation } from "../../src/services/reservations";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+const BootstrapModal = dynamic(() => import("bootstrap/dist/js/bootstrap.bundle.min.js"), { ssr: false });
+
 export default function ReservationsPage() {
     const [reservations, setReservations] = useState([]);
     const [search, setSearch] = useState("");
     const [message, setMessage] = useState("");
     const [isLoading, setIsLoading] = useState(true);
+    // 🔹 Efecto para cargar Bootstrap en el cliente
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            require("bootstrap/dist/js/bootstrap.bundle.min.js");
+        }
+    }, []);
+
+    // 🔹 Efecto para limpiar mensajes después de 3 segundos
     useEffect(() => {
         if (message) {
             const timer = setTimeout(() => {
