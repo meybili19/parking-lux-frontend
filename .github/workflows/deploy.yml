@@ -1,0 +1,54 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches:
+      - test  
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v2
+
+      - name: Login en Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Construir y subir imagen a Docker Hub
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/parking-lux-frontend:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/parking-lux-frontend:latest
+
+      - name: Conectar a AWS EC2 y desplegar
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST_TEST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            echo "🚀 Iniciando despliegue en AWS EC2..."
+
+            # Detener y eliminar el contenedor si ya existe
+            if sudo docker ps -a --format '{{.Names}}' | grep -q parking-lux-frontend; then
+              echo "🛑 Deteniendo y eliminando contenedor existente..."
+              sudo docker stop parking-lux-frontend
+              sudo docker rm parking-lux-frontend
+            fi
+
+            # Remover imágenes antiguas para evitar acumulación
+            echo "🧹 Limpiando imágenes antiguas..."
+            sudo docker image prune -af || true
+
+            # .Descargar la última versión de la imagen desde Docker Hub
+            echo "📥 Descargando nueva imagen..."
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/parking-lux-frontend:latest
+
+            # Ejecutar el nuevo contenedor en el puerto 3000
+            echo "🚀 Ejecutando nuevo contenedor..."
+            sudo docker run -d --name parking-lux-frontend \
+              -p 3000:3000 \
+              ${{ secrets.DOCKER_USERNAME }}/parking-lux-frontend:latest
+
+            echo "✅ Despliegue completado con éxito."

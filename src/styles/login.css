@@ -1,0 +1,106 @@
+/* Fondo con degradado azul claro */
+.login-container {
+    background: linear-gradient(to right, #4A90E2, #63B3ED); /* Azul más claro y moderno */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* Estilo Glassmorphism mejorado */
+.glassmorphism {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    padding: 40px;
+    width: 350px;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+/* Avatar centrado y mejorado */
+.avatar-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Botón de regresar */
+.btn-light {
+    background-color: rgba(255, 255, 255, 0.4);
+    border: none;
+    font-weight: bold;
+    color: white;
+    transition: background 0.3s ease;
+}
+
+.btn-light:hover {
+    background-color: rgba(255, 255, 255, 0.6);
+    color: white;
+}
+
+/* Inputs con un estilo más visible */
+.form-control {
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+    color: #333;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease-in-out;
+}
+
+.form-control::placeholder {
+    color: rgba(51, 51, 51, 0.6);
+}
+
+.form-control:focus {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    outline: none;
+}
+
+/* Botón de Login */
+.btn-primary-login {
+    background: linear-gradient(135deg, #007BFF, #0056b3);
+    border: none;
+    font-weight: bold;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0056b3, #004494);
+    transform: scale(1.05);
+}
+
+/* Botón de Register mejorado */
+.btn-login {
+    background: white; /* Color de fondo para mejor visibilidad */
+    color: #007BFF; /* Color de texto */
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #007BFF; /* Borde azul para mayor contraste */
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-secondary:hover {
+    background: #007BFF;
+    color: white;
+    transform: scale(1.05);
+}

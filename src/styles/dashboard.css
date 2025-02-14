@@ -1,0 +1,66 @@
+/* Estilos generales */
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Logo efecto */
+.logo-effect {
+    color: #ffc107 !important;
+    transition: all 0.3s ease-in-out;
+    font-size: 1.8rem;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.logo-effect:hover {
+    color: #ffdd57 !important;
+    transform: scale(1.1);
+    text-shadow: 0px 4px 15px rgba(255, 193, 7, 0.8);
+}
+
+.logo-effect:active {
+    transform: scale(0.95);
+}
+
+/* Navbar efectos */
+.nav-item-effect {
+    transition: all 0.3s ease-in-out;
+    display: inline-block;
+}
+
+.nav-item-effect:hover {
+    color: #ffc107 !important;
+    transform: scale(1.1);
+    text-shadow: 0px 4px 10px rgba(255, 193, 7, 0.5);
+}
+
+.active-link {
+    color: #ffc107 !important;
+    font-weight: bold;
+    border-bottom: 3px solid #ffc107;
+    transform: scale(1.1);
+    transition: all 0.3s ease-in-out;
+}
+
+/* Animaciones */
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+}
