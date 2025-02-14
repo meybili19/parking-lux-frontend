@@ -10,10 +10,12 @@ COPY package.json package-lock.json ./
 # Instalar TODAS las dependencias (incluyendo devDependencies para el build)
 RUN npm install
 
-# Copiar el resto del código fuente
+# Copiar solo los archivos necesarios
 COPY ./components ./components
 COPY ./pages ./pages
-COPY . .
+COPY ./public ./public
+COPY ./src/styles ./styles
+COPY ./src ./src
 
 # Omitir ESLint en producción (evita errores)
 ENV NEXT_DISABLE_ESLINT=1
