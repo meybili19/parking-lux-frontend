@@ -152,7 +152,9 @@ export default function ReservationsPage() {
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
-                        <button className="btn btn-success">➕ Add Reservation</button>
+                        <button className="btn btn-success" onClick={() => setShowModal(true)}>
+                            ➕ Add Reservation
+                        </button>
                     </div>
 
                     <div className="table-responsive">
@@ -278,7 +280,12 @@ export default function ReservationsPage() {
                         <div className="modal-content">
                             <div className="modal-header bg-primary text-white">
                                 <h5 className="modal-title">✏️ Editar Reserva</h5>
-                                <button className="btn-close" onClick={() => setShowEditModal(false)}></button>
+                                <button
+                                    className="btn btn-primary btn-sm mx-1"
+                                    onClick={() => handleEditReservation(reservation)}
+                                >
+                                    ✏️ Edit
+                                </button>
                             </div>
 
                             <div className="modal-body">
@@ -331,7 +338,13 @@ export default function ReservationsPage() {
                         <div className="modal-content border-danger">
                             <div className="modal-header bg-danger text-white">
                                 <h5 className="modal-title">⚠️ Confirmar Eliminación</h5>
-                                <button className="btn-close" onClick={() => setShowDeleteModal(false)}></button>
+                                <button
+                                    className="btn btn-danger btn-sm mx-1"
+                                    onClick={() => handleDeleteReservation(reservation)}
+                                >
+                                    🗑️ Delete
+                                </button>
+
                             </div>
 
                             <div className="modal-body">
