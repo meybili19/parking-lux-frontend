@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { loginUser } from "../../src/services/auth";
 import { createUser } from "../../src/services/users"; // Import user creation function
@@ -13,12 +12,6 @@ export default function LoginPage() {
     const [newUser, setNewUser] = useState({ identification: "", name: "", email: "", password: "", type: "user" });
     const [registrationSuccess, setRegistrationSuccess] = useState(null);
     const router = useRouter();
-
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            require("bootstrap/dist/js/bootstrap.bundle.min.js");
-        }
-    }, []);
 
     const handleLogin = async (e) => {
         e.preventDefault();

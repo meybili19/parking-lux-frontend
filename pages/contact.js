@@ -1,12 +1,6 @@
 import Layout from "../components/Layout";
-import { useEffect } from "react";
 
 export default function ContactPage() {
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            require("bootstrap/dist/js/bootstrap.bundle.min.js");
-        }
-    }, []);
     return (
         <Layout>
             <div className="container text-center mt-5">

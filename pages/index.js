@@ -1,13 +1,7 @@
 import Link from "next/link";
-import { useEffect } from "react";
 import Layout from "../components/Layout";
 
 export default function HomePage() {
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            require("bootstrap/dist/js/bootstrap.bundle.min.js");
-        }
-    }, []);
     return (
         <Layout>
             {/* Hero Section */}

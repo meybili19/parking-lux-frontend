@@ -13,6 +13,7 @@ export default function UsersPage() {
     const [deletingUser, setDeletingUser] = useState(null);
     const [successMessage, setSuccessMessage] = useState(""); // ✅ Estado para mostrar mensajes
 
+    // 📌 Cargar Bootstrap JS para que los modales funcionen correctamente
     useEffect(() => {
         if (typeof window !== "undefined") {
             require("bootstrap/dist/js/bootstrap.bundle.min.js");

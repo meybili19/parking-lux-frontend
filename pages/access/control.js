@@ -9,12 +9,6 @@ const EntryControl = () => {
   const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      require("bootstrap/dist/js/bootstrap.bundle.min.js");
-    }
-  }, []);
-
-  useEffect(() => {
     if (errorMessage || successMessage) {
       const timer = setTimeout(() => {
         setErrorMessage("");

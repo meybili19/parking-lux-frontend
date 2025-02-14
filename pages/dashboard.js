@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
-import DashboardLayout from "../components/DashboardLayout.js"; 
+import DashboardLayout from "../components/DashboardLayout";
 import UsersPage from "./users";
 import CarsPage from "./cars";
 import AccessControl from "./access/control";
@@ -17,11 +17,6 @@ export default function DashboardPage() {
         const token = localStorage.getItem("token");
         if (!token) {
             router.replace("/auth/login"); 
-        }
-    }, []);
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            require("bootstrap/dist/js/bootstrap.bundle.min.js");
         }
     }, []);
 
