@@ -152,7 +152,7 @@ export default function ReservationsPage() {
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
-                        <button className="btn btn-success">➕ Add Reservation</button>
+                       <button className="btn btn-success" onClick={() => setShowModal(true)}>➕ Add Reservation</button>
                     </div>
 
                     <div className="table-responsive">
@@ -171,6 +171,7 @@ export default function ReservationsPage() {
                                         <th>Start Date</th>
                                         <th>End Date</th>
                                         <th>Total Amount ($)</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -191,6 +192,10 @@ export default function ReservationsPage() {
                                                 <td>{reservation.startDate ? dayjs(reservation.startDate).format("YYYY-MM-DD HH:mm") : "N/A"}</td>
                                                 <td>{reservation.endDate ? dayjs(reservation.endDate).format("YYYY-MM-DD HH:mm") : "N/A"}</td>
                                                 <td>${reservation.totalAmount ? reservation.totalAmount.toFixed(2) : "N/A"}</td>
+                                                <td>
+                                                    <button className="btn btn-primary btn-sm mx-1" onClick={() => handleEditReservation(reservation)}>✏️ Edit</button>
+                                                    <button className="btn btn-danger btn-sm mx-1" onClick={() => handleDeleteReservation(reservation)}>🗑️ Delete</button>
+                                                </td>
                                             </tr>
                                         ))
                                     ) : (
