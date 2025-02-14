@@ -11,6 +11,8 @@ COPY package.json package-lock.json ./
 RUN npm install
 
 # Copiar el resto del código fuente
+COPY ./components ./components
+COPY ./pages ./pages
 COPY . .
 
 # Omitir ESLint en producción (evita errores)

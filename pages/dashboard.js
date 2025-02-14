@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
-import DashboardLayout from "../components/DashboardLayout";
+import DashboardLayout from "../components/DashboardLayout"; 
 import UsersPage from "./users";
 import CarsPage from "./cars";
 import AccessControl from "./access/control";
