@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { loginUser } from "../../src/services/auth";
 import { createUser } from "../../src/services/users"; // Import user creation function
@@ -18,7 +19,7 @@ export default function LoginPage() {
             require("bootstrap/dist/js/bootstrap.bundle.min.js");
         }
     }, []);
-    
+
     const handleLogin = async (e) => {
         e.preventDefault();
         setError("");

@@ -1,5 +1,5 @@
 import Layout from "../components/Layout";
-
+import { useEffect } from "react";
 export default function ServicesPage() {
     useEffect(() => {
         if (typeof window !== "undefined") {

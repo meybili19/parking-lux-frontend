@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useEffect } from "react";
 import Layout from "../components/Layout";
 
 export default function HomePage() {
