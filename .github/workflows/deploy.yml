@@ -3,7 +3,7 @@ name: Deploy to AWS
 on:
   push:
     branches:
-      - test  
+      - test  # 🚀 Se ejecutará solo cuando se haga push a la rama "test"
 
 jobs:
   deploy:
@@ -30,25 +30,26 @@ jobs:
           script: |
             echo "🚀 Iniciando despliegue en AWS EC2..."
 
-            # Detener y eliminar el contenedor si ya existe
+            # 🔹 Detener y eliminar el contenedor anterior si ya existe
             if sudo docker ps -a --format '{{.Names}}' | grep -q parking-lux-frontend; then
               echo "🛑 Deteniendo y eliminando contenedor existente..."
               sudo docker stop parking-lux-frontend
               sudo docker rm parking-lux-frontend
             fi
 
-            # Remover imágenes antiguas para evitar acumulación
-            echo "🧹 Limpiando imágenes antiguas..."
+            # 🧹 Limpiar imágenes antiguas para liberar espacio
+            echo "🧹 Eliminando imágenes antiguas..."
             sudo docker image prune -af || true
 
-            # Descargar la última versión de la imagen desde Docker Hub
+            # 📥 Descargar la nueva imagen desde Docker Hub
             echo "📥 Descargando nueva imagen..."
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/parking-lux-frontend:latest
 
-            # Ejecutar el nuevo contenedor en el puerto 3000
-            echo "🚀 Ejecutando nuevo contenedor..."
+            # 🚀 Ejecutar el nuevo contenedor en el puerto 3000
+            echo "🚀 Iniciando el nuevo contenedor..."
             sudo docker run -d --name parking-lux-frontend \
               -p 3000:3000 \
+              --restart always \  # 🔹 Para reiniciar en caso de fallo
               ${{ secrets.DOCKER_USERNAME }}/parking-lux-frontend:latest
 
             echo "✅ Despliegue completado con éxito."
