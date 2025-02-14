@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: 'standalone', // 🔹 Asegura que Next.js se ejecute como servidor en producción
+  output: 'standalone',
 };
 
-module.exports = nextConfig;
+export default nextConfig;
