@@ -13,13 +13,6 @@ export default function ReservationsPage() {
     const [message, setMessage] = useState("");
     const [isLoading, setIsLoading] = useState(true);
 
-    // 🔹 Cargar Bootstrap solo en el cliente
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            import("bootstrap/dist/js/bootstrap.bundle.min.js");
-        }
-    }, []);
-
     // 🔹 Limpiar mensajes de alerta después de 3 segundos
     useEffect(() => {
         if (message) {

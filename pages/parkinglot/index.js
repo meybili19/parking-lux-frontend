@@ -35,7 +35,11 @@ export default function ParkingLotsPage() {
             console.error("❌ Error loading parking lots:", error);
         }
     };
-
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            require("bootstrap/dist/js/bootstrap.bundle.min.js");
+        }
+    }, []);
 
 
     useEffect(() => {

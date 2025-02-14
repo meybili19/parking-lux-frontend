@@ -19,6 +19,11 @@ export default function DashboardPage() {
             router.replace("/auth/login"); 
         }
     }, []);
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            require("bootstrap/dist/js/bootstrap.bundle.min.js");
+        }
+    }, []);
 
     return (
         <DashboardLayout selectedSection={selectedSection} setSelectedSection={setSelectedSection}>

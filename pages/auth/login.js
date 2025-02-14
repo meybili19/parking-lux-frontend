@@ -13,6 +13,12 @@ export default function LoginPage() {
     const [registrationSuccess, setRegistrationSuccess] = useState(null);
     const router = useRouter();
 
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            require("bootstrap/dist/js/bootstrap.bundle.min.js");
+        }
+    }, []);
+    
     const handleLogin = async (e) => {
         e.preventDefault();
         setError("");

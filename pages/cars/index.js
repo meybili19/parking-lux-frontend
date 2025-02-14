@@ -14,6 +14,11 @@ export default function CarsPage() {
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState(""); // For displaying error messages
 
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            require("bootstrap/dist/js/bootstrap.bundle.min.js");
+        }
+    }, []);
     // 📌 Fetch list of cars initially
     const fetchCars = async () => {
         try {
