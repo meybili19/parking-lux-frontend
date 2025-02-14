@@ -41,7 +41,7 @@ jobs:
             echo "🧹 Limpiando imágenes antiguas..."
             sudo docker image prune -af || true
 
-            # Descargar la última versión de la imagen desde Docker Hub
+            # .Descargar la última versión de la imagen desde Docker Hub
             echo "📥 Descargando nueva imagen..."
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/parking-lux-frontend:latest
 
